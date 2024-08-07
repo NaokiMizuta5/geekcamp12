@@ -1,3 +1,47 @@
+# 環境構築手順
+## Node.jsのインストール
+
+[Node.js](https://nodejs.org/ja/)の公式サイトからインストーラーをダウンロードしてインストールしてください。
+
+## 依存パッケージのインストール
+```
+yarn
+```
+
+## 開発サーバーの起動
+```
+yarn dev
+```
+
+## ビルド
+```
+yarn build
+```
+
+# ディレクトリ構成
+
+```
+geekcamp12/
+│
+├── public/
+│
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── services/
+│   ├── styles/
+│   ├── utils/
+│   ├── App.tsx
+│   └── main.tsx
+│
+├── .gitignore
+├── package.json
+├── vite.config.js
+└── tsconfig.json
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
