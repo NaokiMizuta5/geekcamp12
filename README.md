@@ -19,6 +19,7 @@ yarn build
 ```
 
 # django
+
 ##　インストール
 ```
 pip install django
