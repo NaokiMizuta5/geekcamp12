@@ -55,6 +55,7 @@ geekcamp12/
 ├── package.json
 ├── vite.config.js
 └── tsconfig.json
+```
 
 
 # React + TypeScript + Vite
