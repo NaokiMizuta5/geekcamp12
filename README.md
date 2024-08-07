@@ -18,13 +18,28 @@ yarn dev
 yarn build
 ```
 
+# django
+##　インストール
+```
+pip install django
+```
+
+## サーバーの起動
+```
+python manage.py runserver
+```
+
 # ディレクトリ構成
 
 ```
 geekcamp12/
 │
 ├── public/
-│
+│   
+├── server/
+│   ├── api/
+│   ├── server/
+|  
 ├── src/
 │   ├── assets/
 │   ├── components/

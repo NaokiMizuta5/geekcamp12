@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
   "files": [],
   "references": [
     {
@@ -9,3 +12,4 @@
     }
   ]
 }
+
