@@ -1,47 +1,58 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
 
-function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const Register: React.FC = () => {
+    const [username, setUsername] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    // 登録処理をここに追加
-  };
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password })
+        });
+        if (response.ok) {
+            alert('登録に成功しました！');
+        } else {
+            alert('登録に失敗しました。もう一度お試しください。');
+        }
+    };
 
-  return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" component="h2" gutterBottom>
-        Register
-      </Typography>
-      <Box component="form" onSubmit={handleRegister} noValidate autoComplete="off">
-        <TextField
-          id="username"
-          label="Username"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <TextField
-          id="password"
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Register
-        </Button>
-      </Box>
-    </Container>
-  );
-}
+    return (
+        <div className="container">
+            <h2>ユーザー登録</h2>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="username">ユーザー名:</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                    required 
+                />
+                <label htmlFor="email">メールアドレス:</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required 
+                />
+                <label htmlFor="password">パスワード:</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required 
+                />
+                <button type="submit">登録</button>
+            </form>
+        </div>
+    );
+};
 
 export default Register;
-
