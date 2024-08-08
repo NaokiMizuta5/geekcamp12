@@ -1,42 +1,47 @@
-// src/pages/Register.tsx
 import React, { useState } from 'react';
+import { Container, TextField, Button, Typography, Box } from '@mui/material';
 
-const Register: React.FC = () => {
+function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // 登録処理をここに追加
-    console.log('User registered:', { username, password });
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <Container maxWidth="sm">
+      <Typography variant="h4" component="h2" gutterBottom>
+        Register
+      </Typography>
+      <Box component="form" onSubmit={handleRegister} noValidate autoComplete="off">
+        <TextField
+          id="username"
+          label="Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <TextField
+          id="password"
+          label="Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          Register
+        </Button>
+      </Box>
+    </Container>
   );
-};
+}
 
 export default Register;
+
