@@ -46,9 +46,14 @@ class HabitItem(models.Model):
         null=False,
     )
 
+    # TODO: Implement this
+    habit_notification_setting = ...
+    habit_sharing_settings = ...
+
     created_by = models.ForeignKey(
         to=User,
         on_delete=models.PROTECT,
+        blank=True,
         null=True,
     )
 
@@ -57,10 +62,49 @@ class HabitItem(models.Model):
 
 
 class HabitStatus(models.Model):
-    habit_item = models.ForeignKey(HabitItem, on_delete=models.CASCADE)
-    date = models.DateField()
-    time = models.TimeField()
-    status = models.CharField(max_length=255)
+    SUCCEEDED = 'SC'
+    SKIPPED = 'SK'
+    FAILED = 'FL'
+
+    STATE_CHOICES = {
+        SUCCEEDED: 'succeeded',
+        SKIPPED: 'skipped',
+        FAILED: 'failed',
+    }
+
+    commited_at = models.DateTimeField(
+        verbose_name='commited at',
+        auto_now_add=True,
+        blank=False,
+        null=False,
+    )
+    state = models.CharField(
+        verbose_name='state',
+        max_length=2,
+        choices=STATE_CHOICES,
+        blank=False,
+        null=False,
+        default=SUCCEEDED,
+    )
+
+    habit_item = models.ForeignKey(
+        to=HabitItem,
+        on_delete=models.PROTECT,
+        blank=False,
+        null=False,
+        default=1,
+    )
+    commited_by = models.ForeignKey(
+        to=User,
+        on_delete=models.PROTECT,
+        blank=False,
+        null=False,
+        default=1,
+    )
 
     def __str__(self):
-        return f"{self.habit_item.item_name} - {self.date} - {self.status}"
+        return (
+            f'item: {self.habit_item}; '
+            f'{self.commited_at}; '
+            f'{self.commited_by}'
+        )

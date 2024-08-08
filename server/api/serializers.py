@@ -18,4 +18,4 @@ class HabitItemSerializer(serializers.ModelSerializer):
 class HabitStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = HabitStatus
-        fields = ['id', 'date', 'time', 'status', 'habit_item']
+        fields = ['id', 'commited_at', 'state', 'habit_item']
