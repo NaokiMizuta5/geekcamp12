@@ -13,7 +13,7 @@ class User(models.Model):
     password = models.CharField(max_length=256, blank=False, null=False)
 
     def __str__(self):
-        return f"{self.name} (id: {self.user_id})"
+        return f'{self.name} (id: {self.user_id})'
 
 
 class HabitItem(models.Model):
