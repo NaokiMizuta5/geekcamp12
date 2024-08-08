@@ -1,5 +1,20 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+
+
+class User(models.Model):
+    user_id = models.CharField(
+        max_length=256,
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    name = models.CharField(max_length=256, blank=False, null=False)
+    password = models.CharField(max_length=256, blank=False, null=False)
+
+    def __str__(self):
+        return f"{self.name} (id: {self.user_id})"
+
 
 class HabitItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -10,6 +25,7 @@ class HabitItem(models.Model):
 
     def __str__(self):
         return self.item_name
+
 
 class HabitStatus(models.Model):
     habit_item = models.ForeignKey(HabitItem, on_delete=models.CASCADE)
