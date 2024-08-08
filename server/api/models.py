@@ -1,19 +1,34 @@
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-#from django.contrib.auth.models import User
 
 
-class User(models.Model):
-    user_id = models.CharField(
+class User(AbstractUser):
+    username_validator = UnicodeUsernameValidator()
+
+    username = models.CharField(
+        verbose_name='username',
         max_length=256,
         unique=True,
         blank=False,
         null=False,
+        default='user',
+        validators=[username_validator],
     )
-    name = models.CharField(max_length=256, blank=False, null=False)
-    password = models.CharField(max_length=256, blank=False, null=False)
+    nickname = models.CharField(
+        verbose_name='nickname',
+        max_length=256,
+        unique=False,
+        blank=True,
+        null=False,
+        default='user'
+    )
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['nickname']
 
     def __str__(self):
-        return f'{self.name} (id: {self.user_id})'
+        return f'@{self.username} ({self.nickname})'
 
 
 class HabitItem(models.Model):
