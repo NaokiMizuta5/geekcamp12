@@ -21,7 +21,7 @@ class User(AbstractUser):
         unique=False,
         blank=True,
         null=False,
-        default='user'
+        default='User',
     )
 
     USERNAME_FIELD = 'username'
@@ -32,14 +32,28 @@ class User(AbstractUser):
 
 
 class HabitItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=255)
-    frequency = models.CharField(max_length=255)
-    notification_settings = models.TextField()
-    sharing_settings = models.TextField()
+    name = models.CharField(
+        verbose_name='name',
+        max_length=256,
+        unique=False,
+        blank=False,
+        null=False,
+        default='Some habit',
+    )
+    frequency = models.PositiveIntegerField(
+        verbose_name='frequency',
+        blank=False,
+        null=False,
+    )
+
+    created_by = models.ForeignKey(
+        to=User,
+        on_delete=models.PROTECT,
+        null=True,
+    )
 
     def __str__(self):
-        return self.item_name
+        return self.name
 
 
 class HabitStatus(models.Model):

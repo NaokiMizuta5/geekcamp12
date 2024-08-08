@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class HabitItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = HabitItem
-        fields = ['id', 'item_name', 'frequency',]  # TODO: Add fields
+        fields = ['id', 'name', 'frequency', 'created_by']  # TODO: Add fields
 
 
 class HabitStatusSerializer(serializers.ModelSerializer):
