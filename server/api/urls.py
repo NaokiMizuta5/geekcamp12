@@ -5,10 +5,9 @@ from api.views import HelloWorld, UserViewSet
 
 
 router = routers.DefaultRouter()
-router.register('users', UserViewSet)
+router.register(r'users', UserViewSet)
 
 
 urlpatterns = [
-    path('hello/', HelloWorld.as_view()),
     path('', include(router.urls)),
 ]
