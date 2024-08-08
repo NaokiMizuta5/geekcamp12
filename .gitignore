@@ -28,3 +28,6 @@ dist-ssr
 
 # Cache files
 **/__pycache__/
+
+# Database file (Maybe add this to commits later)
+db.sqlite3
