@@ -25,3 +25,6 @@ dist-ssr
 
 # Virtual environments
 .venv/
+
+# Cache files
+**/__pycache__/
