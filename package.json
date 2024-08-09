@@ -42,5 +42,9 @@
     "lint-staged": "^15.2.8",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/NaokiMizuta5/geekcamp12.git",
+  "author": "smz-exe <shimizu-yuki13861@keio.jp>",
+  "license": "MIT"
 }
