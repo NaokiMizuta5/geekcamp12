@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'nickname',
             'password',
-            'habit_items',
+            'joined_habit_items',
+            'friends',
             'created_habit_items',
             'committed_habit_status',
         ]
@@ -45,7 +46,7 @@ class HabitItemSerializer(serializers.ModelSerializer):
             'name',
             'frequency',
             'created_by',
-            'joined_users',
+            'committing_users',
             'committed_habit_status',
         ]  # TODO: Add fields
 
@@ -55,7 +56,8 @@ class HabitStatusSerializer(serializers.ModelSerializer):
         model = HabitStatus
         fields = [
             'id',
-            'commited_at',
+            'committed_at',
             'state',
             'habit_item',
+            'committed_by',
         ]

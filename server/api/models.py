@@ -25,10 +25,16 @@ class User(AbstractUser):
         null=False,
         default='User',
     )
-    habit_items = models.ManyToManyField(
+    joined_habit_items = models.ManyToManyField(
         to='HabitItem',
-        related_name='joined_users',
-        verbose_name='habit items',
+        related_name='committing_users',
+        verbose_name='joined habit items',
+        blank=True,
+    )
+    friends = models.ManyToManyField(
+        to='User',
+        symmetrical=True,
+        verbose_name='friends',
         blank=True,
     )
 
@@ -81,7 +87,7 @@ class HabitStatus(models.Model):
         FAILED: 'failed',
     }
 
-    commited_at = models.DateTimeField(
+    committed_at = models.DateTimeField(
         verbose_name='commited at',
         auto_now_add=True,
         blank=False,
@@ -104,7 +110,7 @@ class HabitStatus(models.Model):
         null=False,
         default=1,
     )
-    commited_by = models.ForeignKey(
+    committed_by = models.ForeignKey(
         to='User',
         on_delete=models.PROTECT,
         related_name='committed_habit_status',
@@ -116,8 +122,8 @@ class HabitStatus(models.Model):
     def __str__(self):
         return (
             f'item: {self.habit_item}; '
-            f'{self.commited_at}; '
-            f'{self.commited_by}'
+            f'{self.committed_at}; '
+            f'{self.committed_by}'
         )
 
 
