@@ -4,6 +4,9 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 
 from api.models import HabitItem, HabitStatus, User
 from api.serializers import (
@@ -42,3 +45,17 @@ def login_view(request):
         return Response({'message': 'login succeeded'})
     else:
         return Response({'message': 'invalid credentials'}, status=400)
+
+@csrf_exempt
+def register(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        # ユーザーの作成処理
+        user = User.objects.create_user(username=username, email=email, password=password)
+
+        return JsonResponse({'message': 'User registered successfully!'}, status=201)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
