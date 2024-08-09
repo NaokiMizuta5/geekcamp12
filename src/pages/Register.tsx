@@ -73,7 +73,7 @@ const Register: React.FC = () => {
                         paddingRight: '20px',
                     }}
                 >
-                    Create your account
+                    Create your account!
                 </Typography>
             </Box>
 
@@ -81,7 +81,7 @@ const Register: React.FC = () => {
                 component="main"
                 maxWidth={false}
                 sx={{
-                    width: '600px',
+                    width: '400px',
                     marginTop: '100px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -92,8 +92,8 @@ const Register: React.FC = () => {
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                <Typography component="h1" variant="h5" sx={{ textAlign: 'left', width: '100%' }} gutterBottom>
-                    新規登録
+                <Typography component="h1" variant="h5" sx={{ textAlign: 'left', width: '100%', color: '#000000'}} gutterBottom >
+                    Sign up
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
                     <TextField
@@ -101,7 +101,7 @@ const Register: React.FC = () => {
                         required
                         fullWidth
                         id="name"
-                        label="名前"
+                        label="Username"
                         name="name"
                         autoComplete="name"
                         autoFocus
@@ -114,7 +114,7 @@ const Register: React.FC = () => {
                         required
                         fullWidth
                         id="email"
-                        label="メールアドレス"
+                        label="Email"
                         name="email"
                         autoComplete="email"
                         value={email}
@@ -126,7 +126,7 @@ const Register: React.FC = () => {
                         required
                         fullWidth
                         name="password"
-                        label="パスワード"
+                        label="Password"
                         type="password"
                         id="password"
                         autoComplete="current-password"
@@ -143,8 +143,9 @@ const Register: React.FC = () => {
                                 color="primary"
                             />
                         }
-                        label={<Typography sx={{ fontSize: '0.875rem' }}>利用規約に同意します</Typography>}
-                        sx={{ alignItems: 'flex-start', mt: 2 }}
+                        label={<Typography sx={{ fontSize: '0.875rem', paddingTop: '12px' }}>I agree to the terms and coditions</Typography>}
+                        sx={{ alignItems: 'flex-start' }}
+                        labelPlacement="end"
                     />
                     <Button
                         type="submit"
@@ -152,13 +153,13 @@ const Register: React.FC = () => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        登録
+                        Get Started
                     </Button>
                 </Box>
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                    既にアカウントをお持ちですか？{' '}
+                <Typography variant="body2" sx={{ mt: 2 , color: '#000000'}}>
+                    Already a member?{' '}
                     <Link href="#" onClick={() => navigate('/login')} underline="hover">
-                        ログイン
+                        Log in
                     </Link>
                 </Typography>
             </Container>
