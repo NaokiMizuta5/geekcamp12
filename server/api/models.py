@@ -3,6 +3,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
 
+# Tables
+
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
 
@@ -25,6 +27,7 @@ class User(AbstractUser):
     )
     habit_items = models.ManyToManyField(
         to='HabitItem',
+        related_name='joined_users',
         verbose_name='habit items',
         blank=True,
     )
@@ -56,8 +59,9 @@ class HabitItem(models.Model):
     habit_sharing_settings = ...
 
     created_by = models.ForeignKey(
-        to=User,
+        to='User',
         on_delete=models.PROTECT,
+        related_name='created_habit_items',
         blank=True,
         null=True,
     )
@@ -93,15 +97,17 @@ class HabitStatus(models.Model):
     )
 
     habit_item = models.ForeignKey(
-        to=HabitItem,
+        to='HabitItem',
         on_delete=models.PROTECT,
+        related_name='committed_habit_status',
         blank=False,
         null=False,
         default=1,
     )
     commited_by = models.ForeignKey(
-        to=User,
+        to='User',
         on_delete=models.PROTECT,
+        related_name='committed_habit_status',
         blank=False,
         null=False,
         default=1,
@@ -113,3 +119,8 @@ class HabitStatus(models.Model):
             f'{self.commited_at}; '
             f'{self.commited_by}'
         )
+
+
+# Join tables
+
+...

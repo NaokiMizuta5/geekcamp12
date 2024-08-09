@@ -6,7 +6,16 @@ from api.models import User, HabitItem, HabitStatus
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'nickname', 'password', 'habit_items']
+        fields = [
+            'id',
+            'username',
+            'email',
+            'nickname',
+            'password',
+            'habit_items',
+            'created_habit_items',
+            'committed_habit_status',
+        ]
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -31,10 +40,22 @@ class UserSerializer(serializers.ModelSerializer):
 class HabitItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = HabitItem
-        fields = ['id', 'name', 'frequency', 'created_by']  # TODO: Add fields
+        fields = [
+            'id',
+            'name',
+            'frequency',
+            'created_by',
+            'joined_users',
+            'committed_habit_status',
+        ]  # TODO: Add fields
 
 
 class HabitStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = HabitStatus
-        fields = ['id', 'commited_at', 'state', 'habit_item']
+        fields = [
+            'id',
+            'commited_at',
+            'state',
+            'habit_item',
+        ]
