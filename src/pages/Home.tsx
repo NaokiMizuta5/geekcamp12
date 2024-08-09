@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Container, Grid, Paper, IconButton, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Grid, IconButton, Button, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import Sidebar from '@components/Sidebar';
@@ -11,9 +11,9 @@ function Home() {
       <Sidebar />
       
       {/* メインコンテンツ */}
-      <Box component="main" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Box component="main" sx={{width: "100vw",flexGrow: 1,  display: 'flex', flexDirection: 'column' }}>
         {/* ナビゲーションバー */}
-        <AppBar position="static" sx={{ marginBottom: 4, width: 800,backgroundColor: "white" }}>
+        <AppBar position="static" sx={{ marginBottom: 4, width: "100%" ,backgroundColor: "white" }}>
           <Toolbar>
             <IconButton edge="start" aria-label="menu" sx={{ mr: 2, color: "black" }}>
               <MenuIcon />
