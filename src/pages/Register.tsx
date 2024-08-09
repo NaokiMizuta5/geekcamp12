@@ -105,7 +105,7 @@ const Register: React.FC = () => {
                         name="name"
                         autoComplete="name"
                         autoFocus
-                        value={name}
+                        value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         InputProps={{ style: { backgroundColor: '#f0f0f0' } }}
                     />
