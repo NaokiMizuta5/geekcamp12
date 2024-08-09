@@ -6,14 +6,14 @@ from api.models import User, HabitItem, HabitStatus
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'nickname',]
+        fields = ['id', 'username', 'nickname', 'password', 'habit_items']
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def create(self, validated_data):
         password = validated_data.pop('password')
-        user = User(**validated_data)
+        user = User.objects.create(**validated_data)
         user.set_password(password)  # パスワードをハッシュ化して保存
         user.save()
         return user

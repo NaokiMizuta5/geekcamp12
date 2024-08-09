@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
 from api.models import (
     HabitItem,
@@ -8,6 +7,6 @@ from api.models import (
 )
 
 
-admin.site.register(User, UserAdmin)
+admin.site.register(User)
 admin.site.register(HabitItem)
 admin.site.register(HabitStatus)

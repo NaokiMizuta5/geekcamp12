@@ -23,6 +23,11 @@ class User(AbstractUser):
         null=False,
         default='User',
     )
+    habit_items = models.ManyToManyField(
+        to='HabitItem',
+        verbose_name='habit items',
+        blank=True,
+    )
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['nickname']

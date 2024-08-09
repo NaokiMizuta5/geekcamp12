@@ -19,4 +19,6 @@ router.register('habit_status', HabitStatusViewSet)
 urlpatterns = [
     path('hello/', HelloWorld.as_view()),
     path('', include(router.urls)),
+    path('api-auth/', include(
+        'rest_framework.urls', namespace='rest_framework'))
 ]
