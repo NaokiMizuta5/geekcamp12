@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../App.css';
 import logo from '../assets/logo1.png';
 import { Box, Button, TextField, Typography, Container, Link } from '@mui/material';
@@ -12,16 +13,19 @@ const Login: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-        if (response.ok) {
-            navigate('/home');
-        } else {
+        try {
+            const response = await axios.post('http://localhost:8000/api/login/', {
+                username,
+                password
+            });
+    
+            if (response.status === 200) {
+                navigate('/home');
+            } else {
+                alert('ログインに失敗しました。もう一度お試しください。');
+            }
+        } catch (error) {
+            console.error('ログインエラー:', error);
             alert('ログインに失敗しました。もう一度お試しください。');
         }
     };
