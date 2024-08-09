@@ -80,3 +80,31 @@ def register_test(request):
     return JsonResponse(
         {'error': 'Invalid request'},
         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_item(request):
+    serializer = HabitItemSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # Create a habit item
+        return JsonResponse(
+            {'message': 'habit item created successfully'},
+            status=status.HTTP_201_CREATED)
+    return JsonResponse(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_status(request):
+    serializer = HabitStatusSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(
+            {'message': 'habit status created successfully'},
+            status=status.HTTP_201_CREATED)
+    return JsonResponse(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
