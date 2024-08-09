@@ -86,6 +86,8 @@ body {
   font-weight: 500;
   color: #333333;
   margin-left: 10px;
+  position: relative;
+  top: -10px;
 }
 
 .welcome-text {
