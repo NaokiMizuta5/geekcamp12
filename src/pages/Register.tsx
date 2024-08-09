@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -7,17 +8,26 @@ const Register: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, email, password })
-        });
-        if (response.ok) {
-            alert('登録に成功しました！');
-        } else {
-            alert('登録に失敗しました。もう一度お試しください。');
+    
+        try {
+            const response = await axios.post('http://localhost:8000/api/register/', {
+                username,
+                email,
+                password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.status === 201) {
+                alert('登録に成功しました！');
+            } else {
+                alert('登録に失敗しました。もう一度お試しください。');
+            }
+        } catch (error) {
+            alert('エラーが発生しました。後ほど再試行してください。');
+            console.error(error); // デバッグ用
         }
     };
 
