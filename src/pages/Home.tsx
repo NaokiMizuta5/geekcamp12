@@ -6,17 +6,13 @@ import {
   Grid,
   IconButton,
   Button,
-  Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
+  Box
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import Sidebar from "@components/Sidebar";
 import BlockColumn from "@components/BlockColumn";
+import ModalHabit from '@components/ModalHabit';
 import { useState } from "react";
 
 function Home() {
@@ -90,7 +86,7 @@ function Home() {
             <Grid item xs={12} md={4}>
               <BlockColumn
                 title="チーム"
-                initialCount={10}
+                initialCount={0}
                 coloredBlocks={[{ color: "green" }, { color: "blue" }]}
               />
             </Grid>
@@ -99,30 +95,7 @@ function Home() {
       </Box>
 
       {/* モーダルウィンドウ */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Start New Habit!</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Habit Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={habitName}
-            onChange={(e) => setHabitName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ModalHabit open={open} onClose={handleClose} onSave={handleSave} />
     </Box>
   );
 }
