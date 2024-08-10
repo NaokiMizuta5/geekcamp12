@@ -13,7 +13,7 @@
     "routes": [
       {
         "src": "/api/(.*)",
-        "dest": "server/manage.py"
+        "dest": "server/wsgi.py"
       },
       {
         "src": "/(assets|images|js|css)/(.*)",
