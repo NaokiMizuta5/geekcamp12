@@ -1,0 +1,14 @@
+
+.progress-circle-background {
+    fill: none;
+    stroke: #e6e6e6;
+  }
+  
+  .progress-circle-bar {
+    fill: none;
+    stroke: #6200ea;
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+  
