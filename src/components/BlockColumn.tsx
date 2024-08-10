@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import { useState } from 'react';
+import { useSpring, animated } from '@react-spring/web';
 
 interface BlockColumnProps {
   title: string;  // String型 (文字列)
@@ -8,23 +9,32 @@ interface BlockColumnProps {
   coloredBlocks?: { color: string }[];  // オプションの配列で、各オブジェクトは color という文字列プロパティを持つ
 }
 
-const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  coloredBlocks = []}) => {
+// animated.Box の生成
+const AnimatedBox = animated(Box);
 
+const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  coloredBlocks = []}) => {
   const [ count, setCount ] = useState(initialCount);
 
   const handlePileUp = () => {
-    setCount(count + 1);
+    setCount((prevCount) => prevCount + 1);
   };
 
   // 色の配列を定義
-  const colors = ['white', 'lightblue', 'lightgreen', 'lightcoral', 'lightpink'];
+  const colors = ['#ffffff', '#cce7ff', '#a2d2ff', '#ffc1cc', '#ffd6a5'];
 
   // カウントに基づいて色を決定
   const currentColor = colors[Math.floor((count-1) / 25) % colors.length];
 
-  // 表示するブロック数をカウントに応じて計算（上限25）
+  // 表示するブロック数を25個に制限し、25を超えると再び1から表示
   const displayedCount = count % 25 || 25;
-  const blocks = Array(displayedCount).fill({ color: currentColor });
+  const blocks = Array.from({ length: displayedCount }, () => ({ color: currentColor }));
+
+  // 新しいブロックに対するアニメーション設定
+  const animationProps = useSpring({
+    from: { opacity: 0, transform: 'translateY(20px)' },
+    to: { opacity: 1, transform: 'translateY(0px)' },
+    reset: true,
+  });
 
   // HSLを使用して背景色を計算
   const lightness = Math.max(95 - count * 2, 15); // Lightnessを減少させる（最小値20に制限）
@@ -49,18 +59,20 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  colored
           borderRadius: '8px',
         }}
       >
-        {/* ブロックを積み上げる */}
-        {blocks.map((block, index) => (
-          <Box
-            key={index}
-            sx={{
-              width: 40,
-              height: 20,
-              backgroundColor: block.color,
-              borderRadius: '4px',
-            }}
-          ></Box>
-        ))}
+        {blocks.map((block, index) => {
+          return (
+            <AnimatedBox
+              key={index}
+              style={index === blocks.length - 1 ? animationProps : {}}
+              sx={{
+                width: 40,
+                height: 20,
+                backgroundColor: block.color,
+                borderRadius: '4px',
+              }}
+            />
+          );
+        })}
       </Box>
       <Typography variant="h6">{title}</Typography>
       <Button variant="contained" onClick={handlePileUp}>
@@ -68,6 +80,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  colored
       </Button>
     </Box>
   );
-}
+};
+
 
 export default BlockColumn;
