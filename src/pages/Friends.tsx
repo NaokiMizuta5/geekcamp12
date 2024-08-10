@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from '../components/CircularProgressBar';
 import './Friends.css';
 
 const Friends: React.FC = () => {
-    const navigate = useNavigate();
 
     // フレンドリストのデータを定義
-    const [friends, setFriends] = useState([
+    const [friends, _setFriends] = useState([
         { id: 1, name: 'シミズ ナオタロウ', progress: 75, longestStreak: 25, habits: 10, total: 123 },
         { id: 2, name: 'タカハシ ヒロミツ', progress: 50, longestStreak: 18, habits: 8, total: 98 },
         { id: 3, name: 'サトウ アユミ', progress: 30, longestStreak: 30, habits: 15, total: 150 }
