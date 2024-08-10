@@ -174,6 +174,54 @@ def update_user(request, user_id):
         status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['PUT'])
+@csrf_exempt
+def add_friends_to(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    friends = UserSerializer(user).data['friends']
+    friends_added = request.data.get('friends added')
+    if friends_added is None:
+        return Response(
+            {'message': 'no friends added'}, status=status.HTTP_200_OK)
+    new_friends = list(set(friends) | set(friends_added))
+    data = {
+        'friends': new_friends
+    }
+    serializer = UserSerializer(user, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'friends added successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@csrf_exempt
+def remove_friends_from(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    friends = UserSerializer(user).data['friends']
+    friends_removed = request.data.get('friends removed')
+    if friends_removed is None:
+        return Response(
+            {'message': 'no friends removed'}, status=status.HTTP_200_OK)
+    new_friends = list(set(friends) - set(friends_removed))
+    data = {
+        'friends': new_friends
+    }
+    serializer = UserSerializer(user, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'friends removed successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_item(request):
