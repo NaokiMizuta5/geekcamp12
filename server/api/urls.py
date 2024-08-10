@@ -47,6 +47,10 @@ urlpatterns = [
     path('db/habit_item/committing_users/of/<int:habit_item_id>/',
          views.get_committing_users_of,
          name='get_committing_users_of'),
+    path('db/habit_item/piling_up_users/of/<int:habit_item_id>/at/'
+         '<str:date_committed>/',
+         views.get_piling_up_users_of,
+         name='get_piling_up_users_of'),
 
     path('db/habit_status/get/<int:habit_status_id>/',
          views.get_habit_status,
