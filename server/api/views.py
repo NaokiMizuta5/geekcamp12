@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -252,7 +251,6 @@ def get_habit_status(request, habit_status_id):
 @csrf_exempt
 def get_multiple_habit_status(request):
     habit_status = HabitStatus.objects.all()
-    # TODO: Filtering
     filter_set = HabitStatusFilter(request.query_params, queryset=habit_status)
     serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

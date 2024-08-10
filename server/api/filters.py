@@ -40,6 +40,9 @@ class HabitStatusFilter(filters.FilterSet):
         input_formats=['%Y-%m-%d'],
     )
 
+    habit_item = filters.ModelChoiceFilter(queryset=HabitItem.objects.all())
+    committed_by = filters.ModelChoiceFilter(queryset=User.objects.all())
+
     class Meta:
         model = HabitStatus
         fields = ['date_committed']
