@@ -1,32 +1,23 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { useState } from 'react';
-import axios from 'axios';
 
 
 interface ModalHabitProps {
   open: boolean;
   onClose: () => void;
-  onSave: () => void;  // 変更: API呼び出し後の処理に対応
+  onSave: (habitData: { name: string }) => void;
 }
 
 const ModalHabit: React.FC<ModalHabitProps> = ({ open, onClose, onSave }) => {
   const [habitName, setHabitName] = useState('');
-
-  const handleSave = async () => {
+  const handleSave = () => {
     if (habitName.trim() !== '') {
-      try {
-        // create_habit APIにPOSTリクエストを送信
-        await axios.post('http://localhost:8000/api/create_habit/', {
-          name: habitName,
-        });
-        setHabitName('');
-        onClose();
-        onSave();  // 追加: 成功後の処理（例: 親コンポーネントでリストを更新）
-      } catch (error) {
-        console.error('Error creating habit:', error);
-      }
+      onSave({ name: habitName }); // 親コンポーネントのonSaveを呼び出す
+      setHabitName(''); // フィールドをクリア
+      onClose(); // モーダルを閉じる
     }
   };
+
 
   return (
     <Dialog open={open} onClose={onClose}>

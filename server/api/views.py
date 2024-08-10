@@ -48,20 +48,30 @@ def count(request, pk=None):
 @api_view(['POST'])
 def log_habit(request):
     try:
+        # リクエストから habit_id を取得
         habit_id = request.data.get('habit_id')
         print(f"Received habit_id: {habit_id}")
+
+        # HabitItem を取得
         habit_item = get_object_or_404(HabitItem, id=habit_id)
         print(f"Found HabitItem: {habit_item}")
 
-        # HabitLogを作成
+        # HabitLog を作成して保存
         habit_log = HabitLog(habit=habit_item)
         habit_log.save()
         print("HabitLog saved successfully")
         
-        return Response({'message': 'Habit logged successfully'})
+        # 成功レスポンスを返す
+        return Response({
+            'message': 'Habit logged successfully',
+            'habit_item_id': habit_item.id,
+            'habit_name': habit_item.name
+        })
+
     except Exception as e:
+        # エラーの詳細をサーバーログに記録
         print(f"Error occurred: {e}")
-        return Response({'error': 'An error occurred'}, status=500)
+        return Response({'error': str(e)}, status=500)
 
 
 
@@ -181,15 +191,54 @@ def update_user(request, user_id):
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_item(request):
-    serializer = HabitItemSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()  # Create a habit item
+    # リクエストデータから name と created_by を取得
+    name = request.data.get('name')
+    created_by_id = request.data.get('created_by')  # created_by は user_id の number 型
+    
+    # name フィールドが存在しない、または空でないことを確認
+    if not name:
         return JsonResponse(
-            {'message': 'habit item created successfully'},
-            status=status.HTTP_201_CREATED)
+            {'error': 'Name field is required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # HabitItem を作成するためのデータを準備
+    data = {
+        'name': name,
+        'created_by': created_by_id
+    }
+
+    # データを使ってシリアライザを初期化
+    serializer = HabitItemSerializer(data=data)
+    
+    if serializer.is_valid():
+        habit_item = serializer.save()  # HabitItemを作成
+
+        if habit_item.id is None:
+            raise ValueError("HabitItem was not saved properly, id is None")
+
+        if created_by_id:
+            try:
+                user = User.objects.get(id=created_by_id)
+                user.joined_habit_items.add(habit_item)  # 作成者を習慣に自動参加させる
+            except User.DoesNotExist:
+                return JsonResponse(
+                    {'error': 'User not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        # デバッグ用に habit_item.id を確認
+        print(f"Habit item ID: {habit_item.id}")
+        
+        return JsonResponse(
+            {'message': 'Habit item created successfully', 'habit_item_id': habit_item.id, 'name': habit_item.name },
+            status=status.HTTP_201_CREATED
+        )
+    
     return JsonResponse(
-        {'error': 'invalid request'},
-        status=status.HTTP_400_BAD_REQUEST)
+        {'error': serializer.errors},
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
 
 
 @api_view(['POST'])

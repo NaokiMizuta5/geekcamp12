@@ -17,18 +17,23 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
 
   const [ count, setCount ] = useState(0);
   useEffect(() => {
-    // コンポーネントがマウントされたときに、初期カウントを取得
-    axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
-      .then(response => {
-        setCount(response.data.count);
-      })
-      .catch(error => {
-        console.error('Error fetching habit count:', error);
-      });
-  }, [habitId]);
+    if (habitId !== undefined) {
+      axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
+        .then(response => {
+          setCount(response.data.count);
+        })
+        .catch(error => {
+          console.error("Error fetching habit count:", error);
+        });
+    } else {
+      // habitIdがundefinedの場合は初期値を設定
+      setCount(0);
+    }
+  }, [habitId]); // habitIdが設定されたときに再度APIを呼び出す
 
   const handlePileUp = () => {
     // log_habitエンドポイントにPOSTリクエストを送信
+    console.log('Sending habit_id:', habitId); // デバッグ用
     axios.post(`http://localhost:8000/api/habits/log_habit/`, {
       habit_id: habitId
     })
