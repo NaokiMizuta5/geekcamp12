@@ -15,6 +15,10 @@ class UserFilter(filters.FilterSet):
     email = filters.CharFilter(lookup_expr='icontains')
     nickname = filters.CharFilter(lookup_expr='icontains')
 
+    committed_habit_status = filters.ModelChoiceFilter(
+        queryset=HabitStatus.objects.all()
+    )
+
     class Meta:
         model = User
         fields = []
@@ -39,6 +43,9 @@ class HabitStatusFilter(filters.FilterSet):
         lookup_expr='exact',
         input_formats=['%Y-%m-%d'],
     )
+
+    habit_item = filters.ModelChoiceFilter(queryset=HabitItem.objects.all())
+    committed_by = filters.ModelChoiceFilter(queryset=User.objects.all())
 
     class Meta:
         model = HabitStatus

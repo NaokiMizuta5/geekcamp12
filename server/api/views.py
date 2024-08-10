@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
@@ -213,6 +214,33 @@ def get_committing_users_of(request, habit_item_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@csrf_exempt
+def get_piling_up_users_of(request, habit_item_id, date_committed):
+    habit_status_set = HabitStatus.objects.all()
+    query_for_habit_status = {
+        'date_committed': date_committed,
+        'habit_item': habit_item_id,
+    }
+    filtered_habit_status = HabitStatusFilter(
+        query_for_habit_status, queryset=habit_status_set).qs
+    user_set = User.objects.all()
+    query_sets = []
+    for habit_status in filtered_habit_status:
+        query_for_users = {
+            'committed_habit_status': habit_status.id
+        }
+        filtered_users = UserFilter(query_for_users, queryset=user_set).qs
+        query_sets.append(filtered_users)
+    if not query_sets:
+        return Response({}, status=status.HTTP_200_OK)
+    piling_up_users = query_sets[0]
+    for query_set in query_sets[1:]:
+        piling_up_users = (piling_up_users | query_set).distinct()
+    serializer = UserSerializer(piling_up_users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
@@ -252,7 +280,6 @@ def get_habit_status(request, habit_status_id):
 @csrf_exempt
 def get_multiple_habit_status(request):
     habit_status = HabitStatus.objects.all()
-    # TODO: Filtering
     filter_set = HabitStatusFilter(request.query_params, queryset=habit_status)
     serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
