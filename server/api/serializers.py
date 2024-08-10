@@ -71,7 +71,7 @@ class HabitItemSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        habit_item = HabitItem.objects.create(validated_data)
+        habit_item = HabitItem.objects.create(**validated_data)
         habit_item.save()
         return habit_item
 
@@ -103,7 +103,7 @@ class HabitStatusSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        habit_status = HabitStatus.objects.create(validated_data)
+        habit_status = HabitStatus.objects.create(**validated_data)
         habit_status.save()
         return habit_status
 
