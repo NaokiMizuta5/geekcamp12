@@ -46,6 +46,12 @@ class UserSerializer(serializers.ModelSerializer):
         except KeyError:
             pass
 
+        try:
+            joined_habit_items = validated_data.pop('joined_habit_items')
+            instance.joined_habit_items.set(joined_habit_items)
+        except KeyError:
+            pass
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -70,6 +76,12 @@ class HabitItemSerializer(serializers.ModelSerializer):
         return habit_item
 
     def update(self, instance, validated_data):
+        try:
+            committing_users = validated_data.pop('committing_users')
+            instance.committing_users.set(committing_users)
+        except KeyError:
+            pass
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()

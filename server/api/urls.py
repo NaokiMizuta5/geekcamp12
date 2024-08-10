@@ -51,7 +51,7 @@ urlpatterns = [
          '<str:date_committed>/',
          views.get_piling_up_users_of,
          name='get_piling_up_users_of'),
-    path('db/habit_item/update/<int:habit_item>/',
+    path('db/habit_item/update/<int:habit_item_id>/',
          views.update_habit_item,
          name='update_habit_item'),
 

@@ -244,8 +244,9 @@ def get_piling_up_users_of(request, habit_item_id, date_committed):
 @api_view(['PUT'])
 @csrf_exempt
 def update_habit_item(request, habit_item_id):
-    habit_item = get_object_or_404(User, id=habit_item_id)
-    serializer = HabitItemFilter(habit_item, data=request.data, partial=True)
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    serializer = HabitItemSerializer(
+        habit_item, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(
