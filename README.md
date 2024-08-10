@@ -89,3 +89,105 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+
+# API仕様手順
+
+各項で必要なリクエストは，説明の前の単語をキーとしてください．
+また，ここで言及する URL に関しては，いずれも `localhost:8000/api/` が先頭につきますが，便宜上ここでは省略します．
+
+## ユーザに関する操作
+
+### ログイン
+
+POST メソッドで `login/` にアクセス．
+
+リクエストとして
+
+- username: ユーザーネーム．
+- password: パスワード．
+
+を付属する必要あり．
+
+### 登録
+
+`register/` にアクセス．
+メソッドの指定はなし．
+
+リクエストとして
+
+- username: ユーザーネーム．
+- email: メールアドレス．
+- password: 設定するパスワード．
+
+を付属する必要あり．
+
+### ID 指定による単一ユーザの取得
+
+GET メソッドで `db/user/get/<int:user_id>/` にアクセス．
+
+対象のユーザの ID に `<int:user_id>` を置換する．
+
+リクエストは空でよい．
+
+### 条件検索による複数ユーザの取得
+
+GET メソッドで `db/users/get/` にアクセス．
+
+URL の末尾に，`?username=test&email=test` のようにクエリを付属するか，リクエストに付随する．
+
+フィルタリングの対象は
+
+- username: ユーザーネームで，部分一致検索．
+- email: メールアドレスで，部分一致検索．
+- committed_habit_status: 達成状況の ID で，これをもつ達成状況をそのユーザが入力したか．
+
+### 登録している習慣の取得
+
+GET メソッドで `db/user/joined-habit-items/of/<int:user_id>/` にアクセス．
+
+対象のユーザの ID に `<int:user_id>` を置換する．
+
+上と同様の方法で条件検索が可能．
+
+フィルタリングの対象は
+
+- name: 習慣の名前で，部分一致検索．
+
+### フレンドの取得
+
+GET メソッドで `db/user/friends/of/<int:user_id>/` にアクセス．
+
+フレンドを取得する対象のユーザの ID に `<int:user_id>` を置換する．
+
+複数ユーザの取得と同様の条件検索が可能．
+
+### 情報の更新
+
+GET メソッドで `db/user/update/<int:user_id>/` にアクセス．
+
+リクエストとして
+
+- username: 更新後のユーザーネーム．
+- email: 更新後のメールアドレス．
+- password: 更新後のパスワード．
+- joined_habit_items: 登録している習慣の ID のリスト．
+- friends: フレンドであるユーザの ID のリスト．
+
+を付属する必要あり．
+
+フレンドを更新する際には，あらかじめ更新対象のユーザのフレンドのリストを取得し，それに対する操作をして，上記のリクエストに操作後のリストを含める必要がある．
+
+例えば，ユーザ 0 がユーザ 1, 2 とあらかじめフレンドである場合，得られるフレンドのリストは
+```
+  "friends": [1, 2]
+```
+である．ここにユーザ 3 を加える場合は，そのリストに 3 を追加して
+```
+  "friends": [1, 2, 3]
+```
+とする．また，ユーザ 2 を除く場合は
+```
+  "friends": [1, 3]
+```
+とする．こうして操作したリストを，上記のリクエストに含める．
