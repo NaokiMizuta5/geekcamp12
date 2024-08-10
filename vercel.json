@@ -12,15 +12,15 @@
     ],
     "routes": [
       {
-        "src": "api/(.*)",
+        "src": "/api/(.*)",
         "dest": "server/wsgi.py"
       },
       {
-        "src": "(assets|images|js|css)/(.*)",
+        "src": "/(assets|images|js|css)/(.*)",
         "dest": "dist/$1/$2"
       },
       {
-        "src": "(.*)",
+        "src": "/(.*)",
         "dest": "dist/index.html"
       }
     ]
