@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
-from api.models import User, HabitItem, HabitStatus
+from api.models import (
+    HabitItem,
+    HabitStatus,
+    User,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,7 +52,18 @@ class HabitItemSerializer(serializers.ModelSerializer):
             'created_by',
             'committing_users',
             'committed_habit_status',
-        ]  # TODO: Add fields
+        ]
+
+    def create(self, validated_data):
+        habit_item = HabitItem.objects.create(validated_data)
+        habit_item.save()
+        return habit_item
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 
 class HabitStatusSerializer(serializers.ModelSerializer):
@@ -61,3 +76,14 @@ class HabitStatusSerializer(serializers.ModelSerializer):
             'habit_item',
             'committed_by',
         ]
+
+    def create(self, validated_data):
+        habit_status = HabitStatus.objects.create(validated_data)
+        habit_status.save()
+        return habit_status
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
