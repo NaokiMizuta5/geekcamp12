@@ -76,4 +76,6 @@ urlpatterns = [
     path('progress/record/',
          views.create_habit_status,
          name='create_habit_status'),
+
+    path('db/counts/get/', views.get_counts, name='get_counts'),
 ]
