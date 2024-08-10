@@ -68,6 +68,8 @@ else:
         "https://geekcamp12-mbns.vercel.app/",  # Vercelにデプロイしたフロントエンドのドメイン
     ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'server.urls'
 
 TEMPLATES = [
