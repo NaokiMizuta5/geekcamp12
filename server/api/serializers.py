@@ -49,7 +49,7 @@ class HabitItemSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
-            'frequency',
+            # 'frequency',
             'created_by',
             'committing_users',
             'committed_habit_status',
