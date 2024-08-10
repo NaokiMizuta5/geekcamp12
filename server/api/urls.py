@@ -28,7 +28,11 @@ urlpatterns = [
 
     path('db/user/get/<int:user_id>/', views.get_user, name='get_user'),
     path('db/users/get/', views.get_users, name='get_users'),
-    path('db/user/friends/of/<int:user_id>/', views.get_friends_of,
+    path('db/user/joined-habit-items/of/<int:user_id>/',
+         views.get_joined_habit_items_of,
+         name='get_joined_habit_items_of'),
+    path('db/user/friends/of/<int:user_id>/',
+         views.get_friends_of,
          name='get_friends_of'),
 
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
