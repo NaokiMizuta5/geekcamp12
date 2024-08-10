@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../App.css';
 import logo from '../assets/logo1.png';
 import { Box, Button, TextField, Typography, Container, Link } from '@mui/material';
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 
 const Login: React.FC = () => {
@@ -14,7 +15,7 @@ const Login: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/login/', {
+            const response = await axios.post(`${apiUrl}/api/login/`, {
                 username,
                 password
             });

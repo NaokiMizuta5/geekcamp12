@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from django.conf import settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,9 +57,16 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite の開発サーバーのデフォルトポート
-]
+# 開発環境の設定
+if settings.DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",  # Vite の開発サーバーのデフォルトポート
+    ]
+else:
+    # 本番環境の設定
+    CORS_ALLOWED_ORIGINS = [
+        "https://geekcamp12-mbns.vercel.app/",  # Vercelにデプロイしたフロントエンドのドメイン
+    ]
 
 ROOT_URLCONF = 'server.urls'
 

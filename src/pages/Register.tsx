@@ -3,6 +3,7 @@ import axios from 'axios';
 import logo from '../assets/logo1.png';
 import { Box, Button, TextField, Typography, Container, Link, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -15,7 +16,7 @@ const Register: React.FC = () => {
         event.preventDefault();
     
         try {
-            const response = await axios.post('http://localhost:8000/api/register/', {
+            const response = await axios.post(`${apiUrl}/api/register/`, {
                 username,
                 email,
                 password
