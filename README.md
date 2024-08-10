@@ -164,7 +164,7 @@ GET メソッドで `db/user/friends/of/<int:user_id>/` にアクセス．
 
 ### 情報の更新
 
-GET メソッドで `db/user/update/<int:user_id>/` にアクセス．
+PUT メソッドで `db/user/update/<int:user_id>/` にアクセス．
 
 リクエストとして
 
@@ -174,7 +174,7 @@ GET メソッドで `db/user/update/<int:user_id>/` にアクセス．
 - joined_habit_items: 登録している習慣の ID のリスト．
 - friends: フレンドであるユーザの ID のリスト．
 
-を付属する必要あり．
+のいずれか 0 項目以上を付属する．
 
 フレンドを更新する際には，あらかじめ更新対象のユーザのフレンドのリストを取得し，それに対する操作をして，上記のリクエストに操作後のリストを含める必要がある．
 
@@ -191,3 +191,60 @@ GET メソッドで `db/user/update/<int:user_id>/` にアクセス．
   "friends": [1, 3]
 ```
 とする．こうして操作したリストを，上記のリクエストに含める．
+
+## 習慣項目に関する操作
+
+### 習慣項目の作成
+
+POST メソッドで `habits/create/` にアクセス．
+
+リクエストとして
+
+- name: 名称．
+
+を付属する．
+
+### ID 指定による単一項目の取得
+
+GET メソッドで `db/habit_item/get/<int:habit_item_id>/` にアクセス．
+
+要領はユーザの場合と同じ．
+
+リクエストは空でよい．
+
+### 条件検索による複数項目の取得
+
+GET メソッドで `db/habit_items/get/` にアクセス．
+
+条件検索の要領はユーザの場合と同じ．
+
+フィルタリングの対象は
+
+- name: 習慣の名前で，部分一致検索．
+
+### その習慣項目を登録しているユーザの取得
+
+GET メソッドで `db/habit_item/committing_users/of/<int:habit_item_id>/` にアクセス．
+
+複数ユーザの取得と同様の条件検索が可能．
+
+要素は重複がなく，その個数が登録ユーザ数に一致する．
+
+### 同一の年月日に，同一の習慣項目の達成状況を pile up したユーザの取得
+
+GET メソッドで `db/habit_item/piling_up_users/of/<int:habit_item_id>/at/<str:date_committed>/` にアクセス．
+
+習慣項目の名称に `<int:habit_item_id>` を，年月日に `<str:date_committed>` を置換する．たとえば，習慣 1 を 2024 年 8 月 10 日に達成したユーザを取得するなら，前者を 1 に，後者を 2024-08-10 に置換．
+
+複数ユーザの取得と同様の条件検索が可能．
+
+### 習慣項目の更新
+
+PUT メソッドで `db/habit_item/update/<int:habit_item_id>/` にアクセス．
+
+リクエストとして
+
+- name: 更新後の名称．
+- committing_users: 登録しているユーザの ID のリスト．
+
+のいずれか 0 項目以上を付属する．
