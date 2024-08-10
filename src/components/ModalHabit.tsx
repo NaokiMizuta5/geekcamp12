@@ -1,19 +1,23 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { useState } from 'react';
 
+
 interface ModalHabitProps {
   open: boolean;
   onClose: () => void;
-  onSave: (habitName: string) => void;
+  onSave: (habitData: { name: string }) => void;
 }
 
 const ModalHabit: React.FC<ModalHabitProps> = ({ open, onClose, onSave }) => {
   const [habitName, setHabitName] = useState('');
-
   const handleSave = () => {
-    onSave(habitName);
-    setHabitName('');
+    if (habitName.trim() !== '') {
+      onSave({ name: habitName }); // 親コンポーネントのonSaveを呼び出す
+      setHabitName(''); // フィールドをクリア
+      onClose(); // モーダルを閉じる
+    }
   };
+
 
   return (
     <Dialog open={open} onClose={onClose}>
