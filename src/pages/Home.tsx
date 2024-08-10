@@ -5,6 +5,9 @@ import Sidebar from '@components/Sidebar';
 import BlockColumn from '@components/BlockColumn';
 
 function Home() {
+  // 一旦ハードコード
+  const habitId = [1, 2, 3]; 
+  
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3}}>
       {/* サイドバー */}
@@ -31,13 +34,13 @@ function Home() {
         <Container sx={{ flexGrow: 1}}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <BlockColumn title="英単語" initialCount={8} />
+              <BlockColumn title="英単語" habitId={habitId[0]} />
             </Grid>
             <Grid item xs={12} md={4}>
-              <BlockColumn title="筋トレ" initialCount={10} />
+              <BlockColumn title="筋トレ" habitId={habitId[1]}/>
             </Grid>
             <Grid item xs={12} md={4}>
-              <BlockColumn title="チーム" initialCount={10} coloredBlocks={[{ color: 'green' }, { color: 'blue' }]} />
+              <BlockColumn title="チーム" habitId={habitId[2]}/>
             </Grid>
           </Grid>
         </Container>

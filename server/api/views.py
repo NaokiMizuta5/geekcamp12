@@ -8,11 +8,14 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
 
 from api.models import (
     HabitItem,
     HabitStatus,
     User,
+    HabitLog
 )
 from api.serializers import (
     HabitItemSerializer,
@@ -30,10 +33,35 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
 class HabitItemViewSet(viewsets.ModelViewSet):
     queryset = HabitItem.objects.all()
     serializer_class = HabitItemSerializer
+
+
+@api_view(['GET'])
+def count(request, pk=None):
+    habit = get_object_or_404(HabitItem, pk=pk)
+    count = HabitLog.objects.filter(habit=habit).count()  # habit_item -> habit に修正
+    return Response({'count': count})
+
+@api_view(['POST'])
+def log_habit(request):
+    try:
+        habit_id = request.data.get('habit_id')
+        print(f"Received habit_id: {habit_id}")
+        habit_item = get_object_or_404(HabitItem, id=habit_id)
+        print(f"Found HabitItem: {habit_item}")
+
+        # HabitLogを作成
+        habit_log = HabitLog(habit=habit_item)
+        habit_log.save()
+        print("HabitLog saved successfully")
+        
+        return Response({'message': 'Habit logged successfully'})
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return Response({'error': 'An error occurred'}, status=500)
+
 
 
 class HabitStatusViewSet(viewsets.ModelViewSet):

@@ -1,20 +1,42 @@
 import React from 'react';
 import { Paper, Typography, Button, Box } from '@mui/material';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 interface BlockColumnProps {
   title: string;  // String型 (文字列)
-  initialCount: number;  // Int型 (数値)
-  coloredBlocks?: { color: string }[];  // オプションの配列で、各オブジェクトは color という文字列プロパティを持つ
+  habitId: number;  // Int型 (数値)
 }
 
-const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount, coloredBlocks = [] }) => {
-  const totalBlocks = coloredBlocks.length + initialCount; // 合計ブロック数
+const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId }) => {
+  const [count, setCount] = useState(0);
+
   const blocks = [];
-  const [ count, setCount ] = useState(initialCount);
+  useEffect(() => {
+    // コンポーネントがマウントされたときに、初期カウントを取得
+    axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
+      .then(response => {
+        setCount(response.data.count);
+      })
+      .catch(error => {
+        console.error('Error fetching habit count:', error);
+      });
+  }, [habitId]);
 
   const handlePileUp = () => {
-    setCount(count + 1);
+    // log_habitエンドポイントにPOSTリクエストを送信
+    axios.post(`http://localhost:8000/api/habits/log_habit/`, {
+      habit_id: habitId
+    })
+    .then(response => {
+      // カウントを増やす
+      setCount(count + 1);
+      console.log('Habit logged successfully:', response.data);
+    })
+    .catch(error => {
+      console.error('Error logging habit:', error);
+    });
   };
 
   // 白いブロックを作成
@@ -24,9 +46,6 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount, coloredB
 
   return (
     <Paper elevation={3} sx={{ padding: 2, textAlign: 'center', height: '100%' }}>
-      <Typography variant="h4" gutterBottom>
-        {totalBlocks}
-      </Typography>
       <Box
         sx={{
           height: 480,

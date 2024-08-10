@@ -4,6 +4,7 @@ from api.models import (
     HabitItem,
     HabitStatus,
     User,
+    HabitLog
 )
 
 
@@ -87,3 +88,9 @@ class HabitStatusSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+class HabitLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HabitLog
+        fields = ['id', 'habit', 'date']
+
