@@ -89,6 +89,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
+CORS_ALLOWED_ORIGINS = ['https://geekcamp12-mbns.vercel.app']
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
