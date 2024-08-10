@@ -205,6 +205,33 @@ def create_habit_status(request):
         status=status.HTTP_400_BAD_REQUEST)
 
 
+class HabitStatusFilter(filters.FilterSet):
+    id = filters.UUIDFilter()
+
+    date_committed = filters.DateFilter(
+        field_name='date_committed',
+        lookup_expr='exact',
+    )
+
+    class Meta:
+        model = HabitStatus
+        fields = ['date_committed']
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_status_test(request):
+    serializer = HabitStatusSerializer(data=request.data)
+    if serializer.is_valid():
+        habit_status = serializer.save()
+        return Response(
+            {'message': 'habit status created successfully'},
+            status=status.HTTP_201_CREATED)
+    return Response(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 def get_habit_status(request, habit_status_id):
     habit_status = get_object_or_404(HabitStatus, id=habit_status_id)
@@ -217,5 +244,6 @@ def get_habit_status(request, habit_status_id):
 def get_multiple_habit_status(request):
     habit_status = HabitStatus.objects.all()
     # TODO: Filtering
-    serializer = HabitStatusSerializer(habit_status, many=True)
+    filter_set = HabitStatusFilter(request.query_params, queryset=habit_status)
+    serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
