@@ -179,7 +179,7 @@ def update_user(request, user_id):
 def add_friends_to(request, user_id):
     user = get_object_or_404(User, id=user_id)
     friends = UserSerializer(user).data['friends']
-    friends_added = request.data.get('friends added')
+    friends_added = request.data.get('friends_added')
     if friends_added is None:
         return Response(
             {'message': 'no friends added'}, status=status.HTTP_200_OK)
@@ -203,7 +203,7 @@ def add_friends_to(request, user_id):
 def remove_friends_from(request, user_id):
     user = get_object_or_404(User, id=user_id)
     friends = UserSerializer(user).data['friends']
-    friends_removed = request.data.get('friends removed')
+    friends_removed = request.data.get('friends_removed')
     if friends_removed is None:
         return Response(
             {'message': 'no friends removed'}, status=status.HTTP_200_OK)

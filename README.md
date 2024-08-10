@@ -184,9 +184,9 @@ PUT メソッドで `db/user/add-friends-to/<int:user_id>/` にアクセス．
 
 リクエストとして
 
-- friends added: フレンドとして追加するユーザの ID のリスト．
+- friends_added: フレンドとして追加するユーザの ID のリスト．
 
-を付属する．たとえば，ユーザ 1, 2 を追加する場合は `"friends added": [1, 2]`．
+を付属する．たとえば，ユーザ 1, 2 を追加する場合は `"friends_added": [1, 2]`．
 
 ID の重複除去は行わなくてよい．
 
@@ -198,9 +198,9 @@ PUT メソッドで `db/user/remove-friends-from/<int:user_id>/` にアクセス
 
 リクエストとして
 
-- friends removed: フレンドとして追加するユーザの ID のリスト．
+- friends_removed: フレンドとして追加するユーザの ID のリスト．
 
-を付属する．たとえば，ユーザ 1, 2 を削除する場合は `"friends removed": [1, 2]`．
+を付属する．たとえば，ユーザ 1, 2 を削除する場合は `"friends_removed": [1, 2]`．
 
 もともとフレンドに登録されていないユーザの ID を含んだ場合もエラーは発生しない．
 
