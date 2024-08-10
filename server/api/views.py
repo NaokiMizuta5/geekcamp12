@@ -10,6 +10,11 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from api.filters import (
+    HabitItemFilter,
+    HabitStatusFilter,
+    UserFilter,
+)
 from api.models import (
     HabitItem,
     HabitStatus,
@@ -95,19 +100,6 @@ def get_user(request, user_id):
 @csrf_exempt
 def get_users(request):
     users = User.objects.all()
-
-    class UserFilter(filters.FilterSet):
-        id = filters.UUIDFilter()
-
-        # Partial match
-        username = filters.CharFilter(lookup_expr='icontains')
-        email = filters.CharFilter(lookup_expr='icontains')
-        nickname = filters.CharFilter(lookup_expr='icontains')
-
-        class Meta:
-            model = User
-            fields = []
-
     filter_set = UserFilter(request.query_params, queryset=users)
     serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -122,7 +114,9 @@ def get_joined_habit_items_of(request, user_id):
             {'message': f'user not found'},
             status=status.HTTP_404_NOT_FOUND)
     joined_habit_items = user.joined_habit_items.all()
-    serializer = HabitItemSerializer(joined_habit_items, many=True)
+    filter_set = HabitItemFilter(
+        request.query_params, queryset=joined_habit_items)
+    serializer = HabitItemSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -131,7 +125,8 @@ def get_joined_habit_items_of(request, user_id):
 def get_friends_of(request, user_id):
     user = get_object_or_404(User, id=user_id)
     friends = user.friends.all()
-    serializer = UserSerializer(friends, many=True)
+    filter_set = UserFilter(request.query_params, queryset=friends)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -175,17 +170,6 @@ def get_habit_item(request, habit_item_id):
 @api_view(['GET'])
 def get_habit_items(request):
     habit_items = HabitItem.objects.all()
-
-    class HabitItemFilter(filters.FilterSet):
-        id = filters.UUIDFilter()
-
-        # Partial match
-        name = filters.CharFilter(lookup_expr='icontains')
-
-        class Meta:
-            model = HabitItem
-            fields = []
-
     filter_set = HabitItemFilter(request.query_params, queryset=habit_items)
     serializer = HabitItemSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -196,7 +180,8 @@ def get_habit_items(request):
 def get_committing_users_of(request, habit_item_id):
     habit_item = get_object_or_404(HabitItem, id=habit_item_id)
     committing_users = habit_item.committing_users.all()
-    serializer = UserSerializer(committing_users, many=True)
+    filter_set = UserFilter(request.query_params, queryset=committing_users)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -212,20 +197,6 @@ def create_habit_status(request):
     return JsonResponse(
         {'error': 'invalid request'},
         status=status.HTTP_400_BAD_REQUEST)
-
-
-class HabitStatusFilter(filters.FilterSet):
-    id = filters.UUIDFilter()
-
-    date_committed = filters.DateFilter(
-        field_name='date_committed',
-        lookup_expr='exact',
-        input_formats=['%Y-%m-%d'],
-    )
-
-    class Meta:
-        model = HabitStatus
-        fields = ['date_committed']
 
 
 @api_view(['POST'])
