@@ -3,6 +3,7 @@ import { Typography, Button, Box } from '@mui/material';
 import { useSpring, animated } from '@react-spring/web';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 import dayjs from 'dayjs';
 
 interface BlockColumnProps {
@@ -13,6 +14,7 @@ interface BlockColumnProps {
 // animated.Box の生成
 const AnimatedBox = animated(Box);
 
+
 const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
   const [ count, setCount ] = useState(0);
   const [committingUsersCount, setCommittingUsersCount] = useState(0);
@@ -22,7 +24,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
 
   useEffect(() => {
     if (habitId !== undefined) {
-      axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
+      axios.get(`${apiUrl}/api/habits/${habitId}/count/`)
         .then(response => {
           setCount(response.data.count);
         })
@@ -60,7 +62,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
   const handlePileUp = () => {
     // log_habitエンドポイントにPOSTリクエストを送信
     console.log('Sending habit_id:', habitId); // デバッグ用
-    axios.post(`http://localhost:8000/api/habits/log_habit/`, {
+    axios.post(`${apiUrl}/api/habits/log_habit/`, {
       habit_id: habitId
     })
     .then(response => {
