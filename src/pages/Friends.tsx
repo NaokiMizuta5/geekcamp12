@@ -1,53 +1,155 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from '../components/CircularProgressBar';
 import './Friends.css';
+import { Modal, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 const Friends: React.FC = () => {
-    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const [selectedFriend, setSelectedFriend] = useState<any>(null);
+    const [addFriendOpen, setAddFriendOpen] = useState(false);
+    const [newFriendName, setNewFriendName] = useState('');
 
-    // フレンドリストのデータを定義
+    const handleOpen = (friend: any) => {
+        setSelectedFriend(friend);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleAddFriendOpen = () => {
+        setAddFriendOpen(true);
+    };
+
+    const handleAddFriendClose = () => {
+        setAddFriendOpen(false);
+    };
+
+    const handleAddFriendSubmit = () => {
+        // 新しいフレンドの情報を処理するコードをここに追加
+        console.log('New friend added:', newFriendName);
+        setAddFriendOpen(false);
+    };
+
+    const handleDeleteFriend = () => {
+        // フレンド削除の処理をここに追加
+        console.log('Friend deleted:', selectedFriend?.name);
+        setOpen(false);
+    };
+
     const [friends, setFriends] = useState([
-        { id: 1, name: 'シミズ ナオタロウ', progress: 75, longestStreak: 25, habits: 10, total: 123 },
-        { id: 2, name: 'タカハシ ヒロミツ', progress: 50, longestStreak: 18, habits: 8, total: 98 },
-        { id: 3, name: 'サトウ アユミ', progress: 30, longestStreak: 30, habits: 15, total: 150 }
+        { id: 1, name: 'ハチムラ ルイ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar1.png' },
+        { id: 2, name: 'カワムラ ユウキ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar2.png' },
+        { id: 3, name: 'ワタナベ ユウタ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar3.png' }
     ]);
 
     return (
         <div className="friends-container">
-            <h1>Friends list</h1>
-            <div className="friends-list">
-                {friends.map(friend => (
-                    <div key={friend.id} className="friend-card">
-                        <div className="friend-info">
-                            <div className="friend-avatar">
-                                <img src={`https://via.placeholder.com/50?text=${friend.name[0]}`} alt="avatar" />
-                            </div>
-                            <div className="friend-details">
-                                <h2>{friend.name}</h2>
-                            </div>
-                        </div>
-                        <div className="progress-container">
-                            <span className="achievement-label">achievement rate</span>
-                            <CircularProgressBar percentage={friend.progress} />
-                        </div>
-                        <div className="friend-stats">
-                            <div>
-                                <span>Longest Streak</span>
-                                <span>{friend.longestStreak}</span>
-                            </div>
-                            <div>
-                                <span>Habits</span>
-                                <span>{friend.habits}</span>
-                            </div>
-                            <div>
-                                <span>Total</span>
-                                <span>{friend.total}</span>
-                            </div>
-                        </div>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 800 }} aria-label="friend table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell align="left">Status</TableCell>
+                            <TableCell align="right">
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddFriendOpen}
+                                >
+                                    Add new friend
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {friends.map((friend) => (
+                            <TableRow key={friend.id}>
+                                <TableCell component="th" scope="row">
+                                    <div className="friend-info">
+                                        <img src={friend.avatar} alt={`${friend.name}'s avatar`} className="friend-avatar" />
+                                        <span>{friend.name}</span>
+                                    </div>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <div className="friend-status">
+                                        <CircularProgressBar percentage={friend.progress} />
+                                        <div className="friend-status-details">
+                                            <div>
+                                                <span>Longest Streak</span>
+                                                <span>{friend.longestStreak}</span>
+                                            </div>
+                                            <div>
+                                                <span>Habits</span>
+                                                <span>{friend.habits}</span>
+                                            </div>
+                                            <div>
+                                                <span>Total</span>
+                                                <span>{friend.total}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Button onClick={() => handleOpen(friend)}>
+                                        <span className="dots">•••</span>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* フレンド追加モーダル */}
+            <Modal
+                open={addFriendOpen}
+                onClose={handleAddFriendClose}
+                aria-labelledby="add-friend-modal-title"
+                aria-describedby="add-friend-modal-description"
+            >
+                <div className="modal-content">
+                    <h2 id="add-friend-modal-title">Add New Friend</h2>
+                    <TextField
+                        label="Friend Name"
+                        value={newFriendName}
+                        onChange={(e) => setNewFriendName(e.target.value)}
+                        fullWidth
+                    />
+                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                        <Button onClick={handleAddFriendClose} color="secondary" variant="outlined">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleAddFriendSubmit} color="primary" variant="contained">
+                            Add
+                        </Button>
                     </div>
-                ))}
-            </div>
+                </div>
+            </Modal>
+
+            {/* フレンド詳細モーダル */}
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="friend-modal-title"
+                aria-describedby="friend-modal-description"
+            >
+                <div className="modal-content">
+                    <h2 id="friend-modal-title">{selectedFriend?.name}</h2>
+                    <p id="friend-modal-description">Additional details or actions for {selectedFriend?.name}</p>
+                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                        <Button onClick={handleClose} color="secondary" variant="outlined">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleDeleteFriend} color="error" variant="contained">
+                            Delete
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
