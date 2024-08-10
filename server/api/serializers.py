@@ -75,6 +75,8 @@ class HabitStatusSerializer(serializers.ModelSerializer):
             'state',
             'habit_item',
             'committed_by',
+            'count',
+            'next',
         ]
 
     def create(self, validated_data):
