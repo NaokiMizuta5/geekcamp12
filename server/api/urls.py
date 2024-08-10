@@ -18,11 +18,11 @@ router.register('habit_status', HabitStatusViewSet)
 
 
 urlpatterns = [
-    path('hello/', HelloWorld.as_view()),
+    path('hello/', HelloWorld.as_view(), name='hello'),
     path('', include(router.urls)),
     path('api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
-
+    
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
 
@@ -37,8 +37,11 @@ urlpatterns = [
     path('db/user/update/<int:user_id>/',
          views.update_user,
          name='update_user'),
-
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
-    path('progress/record/', views.create_habit_status,
-         name='create habit status')
+    path('habits/log_habit/', views.log_habit, name='log_habit'),
+    path('habits/<int:pk>/count/', views.count, name='count'),  # habit_idを使ってcountを取得
+    
+    # Progress関連
+    path('progress/record/', views.create_habit_status, name='create_habit_status'),
 ]
+
