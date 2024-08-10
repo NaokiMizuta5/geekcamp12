@@ -38,10 +38,6 @@ urlpatterns = [
          views.update_user,
          name='update_user'),
 
-    path('habits/create/', views.create_habit_item, name='create_habit_item'),
-    path('progress/record/', views.create_habit_status,
-         name='create habit status'),
-
     path('db/habit_item/get/<int:habit_item_id>/',
          views.get_habit_item,
          name='get_habit_item'),
@@ -58,4 +54,8 @@ urlpatterns = [
     path('db/multiple_habit_status/get/',
          views.get_multiple_habit_status,
          name='get_multiple_habit_status'),
+
+    path('habits/create/', views.create_habit_item, name='create_habit_item'),
+    path('progress/record/', views.create_habit_status,
+         name='create habit status'),
 ]
