@@ -303,4 +303,10 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
+次のコマンドでサーバーを起動する．
+
+```
+python manage.py runserver
+```
+
 データ入力画面は `https://localhost:8000/admin/` でアクセスする．先ほど作成したアカウントでログインする．

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import json
 
 from django.contrib.auth import authenticate
@@ -15,6 +16,7 @@ from django.shortcuts import get_object_or_404
 
 from api.filters import (
     HabitItemFilter,
+    HabitLogFilter,
     HabitStatusFilter,
     UserFilter,
 )
@@ -26,6 +28,7 @@ from api.models import (
 )
 from api.serializers import (
     HabitItemSerializer,
+    HabitLogSerializer,
     HabitStatusSerializer,
     UserSerializer,
 )
@@ -305,26 +308,73 @@ def update_habit_item(request, habit_item_id):
         status=status.HTTP_400_BAD_REQUEST)
 
 
+def search_habit_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    committed_by = habit_status_data.get('committed_by')
+    date_committed = habit_status_data.get('date_committed')
+    query = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': date_committed,
+    }
+
+    habit_logs = HabitLog.objects.all()
+    filter_set = HabitLogFilter(query, queryset=habit_logs)
+    return filter_set.qs
+
+
+def create_habit_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    committed_by = habit_status_data.get('committed_by')
+    date_committed = habit_status.date_committed - timedelta(days=1)
+    query = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': date_committed.strftime('%Y-%m-%d'),
+    }
+
+    habit_logs = HabitLog.objects.all()
+    filter_set = HabitLogFilter(query, queryset=habit_logs)
+
+    data = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': habit_status.date_committed.strftime('%Y-%m-%d'),
+    }
+    if filter_set.qs:
+        prev_habit_log = filter_set.qs.first()
+        data['count'] = prev_habit_log.count + 1
+
+    # Create a habit log
+    curr_serializer = HabitLogSerializer(data=data)
+    if curr_serializer.is_valid():
+        curr = curr_serializer.save()
+
+        # Update the previous habit log's next
+        if filter_set.qs:
+            prev_serializer = HabitLogSerializer(
+                filter_set.qs.first(), data={'next': curr.id},
+                partial=True)
+            if prev_serializer.is_valid():
+                prev_serializer.save()
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
     serializer = HabitStatusSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(
-            {'message': 'habit status created successfully'},
-            status=status.HTTP_201_CREATED)
-    return JsonResponse(
-        {'error': 'invalid request'},
-        status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-@csrf_exempt
-def create_habit_status_test(request):
-    serializer = HabitStatusSerializer(data=request.data)
-    if serializer.is_valid():
         habit_status = serializer.save()
+
+        # Check if a habit log already exists
+        habit_logs = search_habit_log_by(habit_status)
+        if not habit_logs:
+            create_habit_log_by(habit_status)
+
         return Response(
             {'message': 'habit status created successfully'},
             status=status.HTTP_201_CREATED)

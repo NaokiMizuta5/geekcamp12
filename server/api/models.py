@@ -157,9 +157,15 @@ class HabitLog(models.Model):
         related_name='habit_logs',
         verbose_name='habit item',
     )
-    date_committed = models.DateTimeField(
+    committed_by = models.ForeignKey(
+        to='User',
+        on_delete=models.CASCADE,
+        related_name='committed_habit_logs',
+        blank=False,
+        null=True,
+    )
+    date_committed = models.DateField(
         verbose_name='date committed',
-        auto_now_add=True,
     )
 
     count = models.PositiveIntegerField(
@@ -177,6 +183,15 @@ class HabitLog(models.Model):
         blank=True,
         null=True,
     )
+
+    def __str__(self):
+        return (
+            f'item: {self.habit_item}; '
+            f'{self.date_committed}; '
+            f'{self.committed_by}; '
+            f'count={self.count}; '
+            f'next={self.next}; '
+        )
 
 
 # Join tables
