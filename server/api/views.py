@@ -191,6 +191,15 @@ def get_habit_items(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@csrf_exempt
+def get_committing_users_of(request, habit_item_id):
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    committing_users = habit_item.committing_users.all()
+    serializer = UserSerializer(committing_users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
@@ -211,6 +220,7 @@ class HabitStatusFilter(filters.FilterSet):
     date_committed = filters.DateFilter(
         field_name='date_committed',
         lookup_expr='exact',
+        input_formats=['%Y-%m-%d'],
     )
 
     class Meta:

@@ -48,6 +48,9 @@ urlpatterns = [
     path('db/habit_items/get/',
          views.get_habit_items,
          name='get_habit_items'),
+    path('db/habit_item/committing_users/of/<int:habit_item_id>/',
+         views.get_committing_users_of,
+         name='get_committing_users_of'),
 
     path('db/habit_status/get/<int:habit_status_id>/',
          views.get_habit_status,
