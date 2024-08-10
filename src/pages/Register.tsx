@@ -27,6 +27,7 @@ const Register: React.FC = () => {
     
             if (response.status === 201) {
                 alert('登録に成功しました！');
+                navigate('/home');
             } else {
                 alert('登録に失敗しました。もう一度お試しください。');
             }
