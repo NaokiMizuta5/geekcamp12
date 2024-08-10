@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box } from '@mui/material';
 import { useState } from 'react';
 
 interface BlockColumnProps {
@@ -8,7 +8,7 @@ interface BlockColumnProps {
   coloredBlocks?: { color: string }[];  // オプションの配列で、各オブジェクトは color という文字列プロパティを持つ
 }
 
-const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount}) => {
+const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  coloredBlocks = []}) => {
 
   const [ count, setCount ] = useState(initialCount);
 
@@ -31,13 +31,13 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount}) => {
   const backgroundColor = `hsl(197, 71%, ${lightness}%)`; // HSLのHue=197, Saturation=71%, Lightness=動的値
 
   return (
-    <Paper elevation={3} sx={{ padding: 2, textAlign: 'center', height: '100%' }}>
-      <Typography variant="h4" sx={{color: '#000000'}} gutterBottom>
+    <Box sx={{textAlign: 'center', height: '100%'}}>
+      <Typography variant="h4" gutterBottom>
         {count}
       </Typography>
       <Box
         sx={{
-          height: 480,
+          height: 600,
           background: backgroundColor,
           display: 'flex',
           flexDirection: 'column-reverse',
@@ -45,6 +45,8 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount}) => {
           alignItems: 'center',
           gap: 1,
           marginBottom: 2,
+          padding: 1,
+          borderRadius: '8px',
         }}
       >
         {/* ブロックを積み上げる */}
@@ -55,6 +57,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount}) => {
               width: 40,
               height: 20,
               backgroundColor: block.color,
+              borderRadius: '4px',
             }}
           ></Box>
         ))}
@@ -63,7 +66,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount}) => {
       <Button variant="contained" onClick={handlePileUp}>
         Pile up
       </Button>
-    </Paper>
+    </Box>
   );
 }
 

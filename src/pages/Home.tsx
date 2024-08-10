@@ -6,7 +6,8 @@ import {
   Grid,
   IconButton,
   Button,
-  Box
+  Box,
+  Paper
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
@@ -35,7 +36,7 @@ function Home() {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", padding: 3 }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3, backgroundColor: '#f0f4f8' }}>
       {/* サイドバー */}
       <Sidebar />
 
@@ -52,7 +53,7 @@ function Home() {
         {/* ナビゲーションバー */}
         <AppBar
           position="static"
-          sx={{ marginBottom: 4, width: "100%", backgroundColor: "white" }}
+          sx={{ marginBottom: 4, width: "100%", backgroundColor: "#ffffff", boxShadow: 'none', borderBottom: '1px solid #ddd' }}
         >
           <Toolbar>
             <IconButton
@@ -76,19 +77,25 @@ function Home() {
 
         {/* ダッシュボード */}
         <Container sx={{ flexGrow: 1 }}>
-          <Grid container spacing={3}>
+          <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <BlockColumn title="英単語" initialCount={8} />
+            <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
+                <BlockColumn title="英単語" initialCount={8} />
+              </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
+            <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
               <BlockColumn title="筋トレ" initialCount={10} />
+              </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
+            <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
               <BlockColumn
                 title="チーム"
                 initialCount={0}
                 coloredBlocks={[{ color: "green" }, { color: "blue" }]}
               />
+              </Paper>
             </Grid>
           </Grid>
         </Container>
