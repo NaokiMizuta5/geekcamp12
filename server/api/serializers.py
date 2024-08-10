@@ -34,11 +34,20 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        try:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        except KeyError:
+            pass
+
+        try:
+            friends = validated_data.pop('friends')
+            instance.friends.set(friends)
+        except KeyError:
+            pass
+
         for attr, value in validated_data.items():
-            if attr == 'password':
-                instance.set_password(value)
-            else:
-                setattr(instance, attr, value)
+            setattr(instance, attr, value)
         instance.save()
         return instance
 
