@@ -20,6 +20,8 @@ function App() {
 
 function MainContent() {
   const location = useLocation();
+  // 一旦ハードコード
+  const userId = 1; 
 
   // サイドバーを表示するルート
   const showSidebar = location.pathname === '/' || location.pathname === '/friends' || location.pathname === '/settings';
@@ -43,7 +45,7 @@ function MainContent() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home userId={userId}/>} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/settings" element={<Settings />} />
         </Routes>

@@ -14,14 +14,32 @@ import AddIcon from "@mui/icons-material/Add";
 import Sidebar from "@components/Sidebar";
 import BlockColumn from "@components/BlockColumn";
 import ModalHabit from '@components/ModalHabit';
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import axios from "axios";
 
-function Home() {
-  // 一旦ハードコード
-  const habitId = [1, 2, 3]; 
+interface HabitItem {
+  id: number;
+  name: string;
+  created_by: number | null;
+}
+
+const Home: React.FC<{ userId: number }> = ({ userId }) => {
   
   const [open, setOpen] = useState(false);
   const [habitName, setHabitName] = useState("");
+  const [habitItems, setHabitItems] = useState<HabitItem[]>([]);
+
+
+  useEffect(() => {
+    // created_byに基づいてHabitItemを取得
+    axios.get(`/api/get_habits_by_user/`)
+      .then(response => {
+        setHabitItems(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the habit items!", error);
+      });
+  }, [userId]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -80,26 +98,13 @@ function Home() {
 
         {/* ダッシュボード */}
         <Container sx={{ flexGrow: 1 }}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+          {habitItems.map((habit) => (
+          <Grid item xs={12} md={4} key={habit.id}>
             <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-                <BlockColumn title="英単語" habitId={habitId[0]} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4}>
-            <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-              <BlockColumn title="筋トレ" habitId={habitId[1]} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4}>
-            <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-              <BlockColumn
-                title="チーム"
-                habitId={habitId[2]}
-              />
-              </Paper>
-            </Grid>
+              <BlockColumn title={habit.name} habitId={habit.id} />
+            </Paper>
           </Grid>
+          ))}
         </Container>
       </Box>
 
