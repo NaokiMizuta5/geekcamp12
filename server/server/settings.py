@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-l1a2#kdztn4@_pa457vpo(caa=*(zep&(ln340@uljkeiz+=#0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [    
+    'localhost',
+    '127.0.0.1',
+    '.vercel.app'
+]
 
 
 # Application definition
@@ -56,16 +60,10 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-# 開発環境の設定
-if settings.DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",  # Vite の開発サーバーのデフォルトポート
-    ]
-else:
-    # 本番環境の設定
-    CORS_ALLOWED_ORIGINS = [
-        "https://geekcamp12-mbns.vercel.app/",  # Vercelにデプロイしたフロントエンドのドメイン
-    ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'server.urls'
 

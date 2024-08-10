@@ -29,5 +29,9 @@ export default defineConfig(({ command }) => ({
         changeOrigin: true,
       }
     } : undefined
-  }
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
 }));
