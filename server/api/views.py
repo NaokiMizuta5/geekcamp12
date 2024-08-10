@@ -241,6 +241,21 @@ def get_piling_up_users_of(request, habit_item_id, date_committed):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['PUT'])
+@csrf_exempt
+def update_habit_item(request, habit_item_id):
+    habit_item = get_object_or_404(User, id=habit_item_id)
+    serializer = HabitItemFilter(habit_item, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'habit item updated successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
