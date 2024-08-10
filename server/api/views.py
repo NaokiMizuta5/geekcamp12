@@ -164,6 +164,33 @@ def create_habit_item(request):
         status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@csrf_exempt
+def get_habit_item(request, habit_item_id):
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    serializer = HabitItemSerializer(habit_item)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_habit_items(request):
+    habit_items = HabitItem.objects.all()
+
+    class HabitItemFilter(filters.FilterSet):
+        id = filters.UUIDFilter()
+
+        # Partial match
+        name = filters.CharFilter(lookup_expr='icontains')
+
+        class Meta:
+            model = HabitItem
+            fields = []
+
+    filter_set = HabitItemFilter(request.query_params, queryset=habit_items)
+    serializer = HabitItemSerializer(instance=filter_set.qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
@@ -189,5 +216,6 @@ def get_habit_status(request, habit_status_id):
 @csrf_exempt
 def get_multiple_habit_status(request):
     habit_status = HabitStatus.objects.all()
+    # TODO: Filtering
     serializer = HabitStatusSerializer(habit_status, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
