@@ -3,6 +3,7 @@ import { Typography, Button, Box } from '@mui/material';
 import { useSpring, animated } from '@react-spring/web';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 interface BlockColumnProps {
   title: string;  // String型 (文字列)
@@ -17,8 +18,10 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
   const [committingUsersCount, setCommittingUsersCount] = useState(0);
   const [pileUpUsersCount, setPileUpUsersCount] = useState(0);
 
+  const today = dayjs().format('YYYY-MM-DD'); // 今日の日付を取得
+
   useEffect(() => {
-    // コンポーネントがマウントされたときに、初期カウントを取得
+    //初期カウントを取得
     axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
       .then(response => {
         setCount(response.data.count);
@@ -28,17 +31,17 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
       });
 
     // committing_users 数を取得
-    axios.get(`http://localhost:8000/api/habits/${habitId}/committing_users/`)
-      .then(response => {
-        setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
-      })
-      .catch(error => {
-        console.error('Error fetching committing users:', error);
-      });
+    axios.get(`http://localhost:8000/db/habit_item/committing_users/of/${habitId}/`)
+  .then(response => {
+    setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
+  })
+  .catch(error => {
+    console.error('Error fetching committing users:', error);
+  });
 
     // Pile up しているユーザー数をリアルタイムで取得
     const intervalId = setInterval(() => {
-      axios.get(`http://localhost:8000/api/habits/${habitId}/pile_up_users/`)
+      axios.get(`http://localhost:8000/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`)
         .then(response => {
           setPileUpUsersCount(response.data.length);
         })
@@ -51,12 +54,10 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
   }, [habitId]);
 
   const handlePileUp = () => {
-    // log_habitエンドポイントにPOSTリクエストを送信
     axios.post(`http://localhost:8000/api/habits/log_habit/`, {
       habit_id: habitId
     })
     .then(response => {
-      setCount((prevCount) => prevCount + 1);
       console.log('Habit logged successfully:', response.data);
     })
     .catch(error => {
