@@ -37,6 +37,24 @@ urlpatterns = [
     path('db/user/update/<int:user_id>/',
          views.update_user,
          name='update_user'),
+
+    path('db/habit_item/get/<int:habit_item_id>/',
+         views.get_habit_item,
+         name='get_habit_item'),
+    path('db/habit_items/get/',
+         views.get_habit_items,
+         name='get_habit_items'),
+    path('db/habit_item/committing_users/of/<int:habit_item_id>/',
+         views.get_committing_users_of,
+         name='get_committing_users_of'),
+
+    path('db/habit_status/get/<int:habit_status_id>/',
+         views.get_habit_status,
+         name='get_habit_status'),
+    path('db/multiple_habit_status/get/',
+         views.get_multiple_habit_status,
+         name='get_multiple_habit_status'),
+
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
     path('habits/log_habit/', views.log_habit, name='log_habit'),
     path('habits/<int:pk>/count/', views.count, name='count'),  # habit_idを使ってcountを取得

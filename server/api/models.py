@@ -87,12 +87,19 @@ class HabitStatus(models.Model):
         FAILED: 'failed',
     }
 
-    committed_at = models.DateTimeField(
-        verbose_name='commited at',
+    date_committed = models.DateField(
+        verbose_name='date committed',
         auto_now_add=True,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
+    time_committed = models.TimeField(
+        verbose_name='time committed',
+        auto_now_add=True,
+        blank=True,
+        null=True,
+    )
+
     state = models.CharField(
         verbose_name='state',
         max_length=2,
@@ -119,10 +126,26 @@ class HabitStatus(models.Model):
         default=1,
     )
 
+    count = models.PositiveIntegerField(
+        verbose_name='count',
+        blank=True,
+        null=False,
+        default=0,
+    )
+
+    next = models.OneToOneField(
+        to='HabitStatus',
+        on_delete=models.PROTECT,
+        related_name='prev',
+        verbose_name='next habit status',
+        blank=True,
+        null=True,
+    )
+
     def __str__(self):
         return (
             f'item: {self.habit_item}; '
-            f'{self.committed_at}; '
+            f'{self.date_committed} {self.time_committed}; '
             f'{self.committed_by}'
         )
 

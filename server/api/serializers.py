@@ -72,10 +72,13 @@ class HabitStatusSerializer(serializers.ModelSerializer):
         model = HabitStatus
         fields = [
             'id',
-            'committed_at',
+            'date_committed',
+            'time_committed',
             'state',
             'habit_item',
             'committed_by',
+            'count',
+            'next',
         ]
 
     def create(self, validated_data):

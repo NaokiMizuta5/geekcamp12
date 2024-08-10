@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_filters',
     "rest_framework",
     "corsheaders",
+    "django_filters",
     "api.apps.ApiConfig",
 ]
 
