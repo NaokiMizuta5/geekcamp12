@@ -17,11 +17,11 @@
       },
       {
         "src": "/(assets|images|js|css)/(.*)",
-        "dest": "dist/$1/$2"
+        "dest": "/dist/$1/$2"
       },
       {
         "src": "/(.*)",
-        "dest": "dist/index.html"
+        "dest": "/dist/index.html"
       }
     ]
   }
