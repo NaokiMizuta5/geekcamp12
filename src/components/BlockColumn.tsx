@@ -1,8 +1,7 @@
 import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
-import { useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface BlockColumnProps {
@@ -14,8 +13,10 @@ interface BlockColumnProps {
 const AnimatedBox = animated(Box);
 
 const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
-
   const [ count, setCount ] = useState(0);
+  const [committingUsersCount, setCommittingUsersCount] = useState(0);
+  const [pileUpUsersCount, setPileUpUsersCount] = useState(0);
+
   useEffect(() => {
     // コンポーネントがマウントされたときに、初期カウントを取得
     axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
@@ -25,6 +26,28 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
       .catch(error => {
         console.error('Error fetching habit count:', error);
       });
+
+    // committing_users 数を取得
+    axios.get(`http://localhost:8000/api/habits/${habitId}/committing_users/`)
+      .then(response => {
+        setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
+      })
+      .catch(error => {
+        console.error('Error fetching committing users:', error);
+      });
+
+    // Pile up しているユーザー数をリアルタイムで取得
+    const intervalId = setInterval(() => {
+      axios.get(`http://localhost:8000/api/habits/${habitId}/pile_up_users/`)
+        .then(response => {
+          setPileUpUsersCount(response.data.length);
+        })
+        .catch(error => {
+          console.error('Error fetching pile up users:', error);
+        });
+    }, 1000); // 1秒ごとに更新
+
+    return () => clearInterval(intervalId); // コンポーネントがアンマウントされたときにクリーンアップ
   }, [habitId]);
 
   const handlePileUp = () => {
@@ -33,7 +56,6 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
       habit_id: habitId
     })
     .then(response => {
-      // カウントを増やす
       setCount((prevCount) => prevCount + 1);
       console.log('Habit logged successfully:', response.data);
     })
@@ -67,6 +89,12 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
     <Box sx={{textAlign: 'center', height: '100%'}}>
       <Typography variant="h4" gutterBottom>
         {count}
+      </Typography>
+      <Typography variant="subtitle1">
+        Committing Users: {committingUsersCount}
+      </Typography>
+      <Typography variant="subtitle2">
+        Pile Up Users: {pileUpUsersCount} / {committingUsersCount}
       </Typography>
       <Box
         sx={{

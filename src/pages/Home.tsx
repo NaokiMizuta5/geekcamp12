@@ -18,7 +18,7 @@ import { useState } from "react";
 
 function Home() {
   // 一旦ハードコード
-  const habitId = [1, 2, 3]; 
+  const habitId = [1, 2, 3];
   
   const [open, setOpen] = useState(false);
   const [habitName, setHabitName] = useState("");
