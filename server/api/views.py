@@ -47,9 +47,10 @@ class HabitItemViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def count(request, pk=None):
-    habit = get_object_or_404(HabitItem, pk=pk)
-    count = HabitLog.objects.filter(habit=habit).count()  # habit_item -> habit に修正
+    habit_item = get_object_or_404(HabitItem, pk=pk)
+    count = HabitLog.objects.filter(habit_item=habit_item).count()  # habit_item -> habit に修正
     return Response({'count': count})
+
 
 @api_view(['POST'])
 def log_habit(request):
@@ -60,15 +61,14 @@ def log_habit(request):
         print(f"Found HabitItem: {habit_item}")
 
         # HabitLogを作成
-        habit_log = HabitLog(habit=habit_item)
+        habit_log = HabitLog(habit_item=habit_item)
         habit_log.save()
         print("HabitLog saved successfully")
-        
+
         return Response({'message': 'Habit logged successfully'})
     except Exception as e:
         print(f"Error occurred: {e}")
         return Response({'error': 'An error occurred'}, status=500)
-
 
 
 class HabitStatusViewSet(viewsets.ModelViewSet):

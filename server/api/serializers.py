@@ -113,8 +113,24 @@ class HabitStatusSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class HabitLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = HabitLog
-        fields = ['id', 'habit', 'date']
+        fields = [
+            'id',
+            'habit_item',
+            'date_committed',
+            'next',
+        ]
 
+    def create(self, validated_data):
+        habit_log = HabitLog.objects.create(**validated_data)
+        habit_log.save()
+        return habit_log
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
