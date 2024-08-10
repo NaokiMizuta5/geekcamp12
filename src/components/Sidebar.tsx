@@ -2,11 +2,14 @@ import { Drawer, List, ListItem, ListItemText, ListItemButton, ListItemIcon, Too
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ViewListIcon from '@mui/icons-material/ViewList';  // or AppsIcon
+import { useNavigate } from 'react-router-dom';
 
 
 const drawerWidth = 240;
 
 function Sidebar() {
+  const navigate = useNavigate();
+
   return (
     <Drawer
       variant="permanent"
@@ -20,7 +23,7 @@ function Sidebar() {
       <Divider />
       <List>
       <ListItem disablePadding sx={{ marginBottom: 2 }}>
-          <ListItemButton>
+          <ListItemButton onClick={() => navigate('/Home')}>
             <ListItemIcon>
               <ViewListIcon />
             </ListItemIcon>
@@ -28,15 +31,15 @@ function Sidebar() {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding sx={{ marginBottom: 2 }}>
-          <ListItemButton>
-          <ListItemIcon>
+        <ListItemButton onClick={() => navigate('/friends')}>
+            <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Friends" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={() => navigate('/settings')}>
           <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
