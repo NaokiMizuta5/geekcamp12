@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
-from . import views
 
+from . import views
 from api.views import (
     HabitItemViewSet,
     HabitStatusViewSet,
@@ -22,6 +22,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
+
     path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
+    path('login/', views.login, name='login'),
+    path('habits/create/', views.create_habit_item, name='create_habit_item'),
+    path('progress/record/', views.create_habit_status,
+         name='create habit status')
 ]

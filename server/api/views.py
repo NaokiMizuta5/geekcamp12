@@ -1,14 +1,19 @@
+import json
+
 from django.contrib.auth import authenticate
+from django.http import JsonResponse
 from django.shortcuts import render
-from rest_framework import viewsets
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.http import JsonResponse
 
-from api.models import HabitItem, HabitStatus, User
+from api.models import (
+    HabitItem,
+    HabitStatus,
+    User,
+)
 from api.serializers import (
     HabitItemSerializer,
     HabitStatusSerializer,
@@ -37,7 +42,7 @@ class HabitStatusViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-def login_view(request):
+def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
@@ -45,6 +50,7 @@ def login_view(request):
         return Response({'message': 'login succeeded'})
     else:
         return Response({'message': 'invalid credentials'}, status=400)
+
 
 @csrf_exempt
 def register(request):
@@ -59,3 +65,46 @@ def register(request):
 
         return JsonResponse({'message': 'User registered successfully!'}, status=201)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+# NOTE: Used UserSerializer to create a user
+@api_view(['POST'])
+@csrf_exempt
+def register_test(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # Create a user
+        return JsonResponse(
+            {'message': 'User registered successfully!'},
+            status=status.HTTP_201_CREATED)
+    return JsonResponse(
+        {'error': 'Invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_item(request):
+    serializer = HabitItemSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # Create a habit item
+        return JsonResponse(
+            {'message': 'habit item created successfully'},
+            status=status.HTTP_201_CREATED)
+    return JsonResponse(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_status(request):
+    serializer = HabitStatusSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(
+            {'message': 'habit status created successfully'},
+            status=status.HTTP_201_CREATED)
+    return JsonResponse(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
