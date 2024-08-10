@@ -26,8 +26,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
 
-    path('user/get/<int:user_id>/', views.get_user, name='get_user'),
-    path('users/get/', views.get_users, name='get_users'),
+    path('db/user/get/<int:user_id>/', views.get_user, name='get_user'),
+    path('db/users/get/', views.get_users, name='get_users'),
 
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
     path('progress/record/', views.create_habit_status,

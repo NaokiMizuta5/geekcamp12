@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
+from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -94,8 +95,21 @@ def get_user(request, user_id):
 @csrf_exempt
 def get_users(request):
     users = User.objects.all()
-    # TODO: Filtering
-    serializer = UserSerializer(users, many=True)
+
+    class UserFilter(filters.FilterSet):
+        id = filters.UUIDFilter()
+
+        # Partial match
+        username = filters.CharFilter(lookup_expr='icontains')
+        email = filters.CharFilter(lookup_expr='icontains')
+        nickname = filters.CharFilter(lookup_expr='icontains')
+
+        class Meta:
+            model = User
+            fields = []
+
+    filter_set = UserFilter(request.query_params, queryset=users)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
