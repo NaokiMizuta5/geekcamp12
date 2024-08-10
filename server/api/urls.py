@@ -34,6 +34,9 @@ urlpatterns = [
     path('db/user/friends/of/<int:user_id>/',
          views.get_friends_of,
          name='get_friends_of'),
+    path('db/user/update/<int:user_id>/',
+         views.update_user,
+         name='update_user'),
 
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
     path('progress/record/', views.create_habit_status,
