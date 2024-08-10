@@ -40,5 +40,12 @@ urlpatterns = [
 
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
     path('progress/record/', views.create_habit_status,
-         name='create habit status')
+         name='create habit status'),
+
+    path('db/habit_status/get/<int:habit_status_id>',
+         views.get_habit_status,
+         name='get_habit_status'),
+    path('db/multiple_habit_status/get/',
+         views.get_multiple_habit_status,
+         name='get_multiple_habit_status'),
 ]

@@ -176,3 +176,18 @@ def create_habit_status(request):
     return JsonResponse(
         {'error': 'invalid request'},
         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_habit_status(request, habit_status_id):
+    habit_status = get_object_or_404(HabitStatus, id=habit_status_id)
+    serializer = HabitStatusSerializer(habit_status)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_multiple_habit_status(request):
+    habit_status = HabitStatus.objects.all()
+    serializer = HabitStatusSerializer(habit_status, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
