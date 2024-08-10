@@ -3,7 +3,6 @@ import {
   Toolbar,
   Typography,
   Container,
-  Grid,
   IconButton,
   Button,
   Box,
@@ -52,27 +51,12 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
     setOpen(false);
   };
 
-  const handleSave = async (habitData: { name: string }) => {
-    try {
-      const response = await axios.post(`${apiUrl}/api/habits/create/`, {
-        name: habitData.name,
-        created_by: userId, // `userId` は数値
-      });
-
-      console.log('Response data:', response.data); // デバッグ用にレスポンスデータを確認
-
-      const newHabitItem: HabitItem = {
-        id: response.data.habit_item_id,
-        name: response.data.name,
-        created_by: userId.toString(), // userId を文字列に変換
-      };
-       console.log('New Habit ID:', newHabitItem.id); // ここで新しい habit_item_id を確認
-      setHabitItems(prevHabitItems => [...prevHabitItems, newHabitItem]);
-      setOpen(false);
-    } catch (error) {
-      console.error('Error creating a new habit item:', error);
-    }
+  const handleSave = (newHabitItem: HabitItem) => {
+    // 新しい habit を habitItems に追加
+    setHabitItems(prevHabitItems => [...prevHabitItems, newHabitItem]);
+    setOpen(false);
   };
+
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3, backgroundColor: '#f0f4f8' }}>
@@ -81,10 +65,13 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
       <Box
         component="main"
         sx={{
-          width: "100vw",
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
+          width: '100%',
+          maxWidth: 'calc(100vw - 240px)', // 240pxはSidebarの幅
+          overflowX: 'hidden',
+          margin: '0 auto',
         }}
       >
         <AppBar
@@ -115,20 +102,32 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
         {isLoading ? (
           <Typography>Loading...</Typography>
         ) : (
-          <Grid container spacing={4}>
-            {habitItems.map((habit) => (
-              <Grid item xs={12} md={4} key={habit.id}>
-                <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-                  <BlockColumn title={habit.name} habitId={habit.id} />
+          <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: 'row',
+                overflowX: 'auto',
+                padding: 1,
+                paddingBottom: 3,
+              }}
+            >
+              {habitItems.map((habit) => (
+                <Paper
+                  key={habit.id}
+                  elevation={6}
+                  sx={{ padding: 2, borderRadius: 2, minWidth: 300 }}
+                >
+                  <BlockColumn title={habit.name} habitId={habit.id} userId={userId} />
                 </Paper>
-              </Grid>
-            ))}
-          </Grid>
+              ))}
+            </Box>
         )}
       </Container>
       </Box>
 
-      <ModalHabit open={open} onClose={handleClose} onSave={handleSave} />
+      {/* ModalHabitを呼び出し、habit作成後にhandleSaveが呼ばれる */}
+      <ModalHabit open={open} onClose={handleClose} onSave={handleSave} userId={userId} />
     </Box>
   );
 }

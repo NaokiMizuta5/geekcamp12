@@ -62,8 +62,8 @@ class Migration(migrations.Migration):
             name='HabitLog',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now_add=True)),
-                ('habit', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.habititem')),
+                ('date_committed', models.DateTimeField(auto_now_add=True, verbose_name='date committed')),
+                ('habit_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='habit_logs', to='api.habititem', verbose_name='habit item')),
             ],
         ),
         migrations.CreateModel(

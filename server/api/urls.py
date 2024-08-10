@@ -64,6 +64,11 @@ urlpatterns = [
     path('habits/<int:pk>/count/', views.count, name='count'),  # habit_idを使ってcountを取得
     
     # Progress関連
-    path('progress/record/', views.create_habit_status, name='create_habit_status'),
+    path('progress/record/',
+         views.create_habit_status,
+         name='create_habit_status'),
+
+    path('db/counts/get/', views.get_counts, name='get_counts'),
 ]
+
 

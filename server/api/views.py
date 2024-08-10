@@ -17,6 +17,7 @@ from api.filters import (
     HabitItemFilter,
     HabitStatusFilter,
     UserFilter,
+    HabitLogFilter
 )
 from api.models import (
     HabitItem,
@@ -332,3 +333,31 @@ def get_multiple_habit_status(request):
     filter_set = HabitStatusFilter(request.query_params, queryset=habit_status)
     serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@csrf_exempt
+def get_counts(request):
+    habit_logs = HabitLog.objects.all()
+    filter_set = HabitLogFilter(request.query_params, queryset=habit_logs)
+    serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
+
+    counts = []
+    for habit_log in serializer.data:
+        if habit_log['next'] is None:
+            counts.append(habit_log['count'])
+
+    if counts:
+        response = {
+            'counts': counts,
+            'max': max(counts),
+            'latest': counts[-1],
+        }
+    else:
+        response = {
+            'counts': [],
+            'max': 0,  # デフォルトの値として0を設定
+            'latest': 0,  # デフォルトの値として0を設定
+        }
+
+
+    return Response(response, status=status.HTTP_200_OK)

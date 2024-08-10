@@ -145,8 +145,48 @@ class HabitStatus(models.Model):
         )
 
 class HabitLog(models.Model):
-    habit = models.ForeignKey(HabitItem, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    habit_item = models.ForeignKey(
+        HabitItem,
+        on_delete=models.CASCADE,
+        related_name='habit_logs',
+        verbose_name='habit item',
+    )
+    committed_by = models.ForeignKey(
+        to='User',
+        on_delete=models.CASCADE,
+        related_name='committed_habit_logs',
+        blank=False,
+        null=True,
+    )
+    date_committed = models.DateField(
+        verbose_name='date committed',
+    )
+
+    count = models.PositiveIntegerField(
+        verbose_name='count',
+        blank=True,
+        null=False,
+        default=1,
+    )
+
+    next = models.OneToOneField(
+        to='HabitLog',
+        on_delete=models.PROTECT,
+        related_name='prev',
+        verbose_name='next habit log',
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return (
+            f'item: {self.habit_item}; '
+            f'{self.date_committed}; '
+            f'{self.committed_by}; '
+            f'count={self.count}; '
+            f'next={self.next}; '
+        )
+
 
 
 
