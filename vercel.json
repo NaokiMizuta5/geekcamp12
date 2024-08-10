@@ -1,15 +1,19 @@
 {
     "builds": [
       {
-        "src": "server/wsgi.py",
-        "use": "@vercel/python",
+        "src": "server/manage.py",
+        "use": "@vercel/python"
+      },
+      {
+        "src": "package.json",
+        "use": "@vercel/static-build",
         "config": { "distDir": "dist" }
       }
     ],
     "routes": [
       {
         "src": "/api/(.*)",
-        "dest": "server/wsgi.py"
+        "dest": "server/manage.py"
       },
       {
         "src": "/(.*)",
