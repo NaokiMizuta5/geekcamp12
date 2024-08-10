@@ -12,6 +12,11 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 
+from api.filters import (
+    HabitItemFilter,
+    HabitStatusFilter,
+    UserFilter,
+)
 from api.models import (
     HabitItem,
     HabitStatus,
@@ -123,19 +128,6 @@ def get_user(request, user_id):
 @csrf_exempt
 def get_users(request):
     users = User.objects.all()
-
-    class UserFilter(filters.FilterSet):
-        id = filters.UUIDFilter()
-
-        # Partial match
-        username = filters.CharFilter(lookup_expr='icontains')
-        email = filters.CharFilter(lookup_expr='icontains')
-        nickname = filters.CharFilter(lookup_expr='icontains')
-
-        class Meta:
-            model = User
-            fields = []
-
     filter_set = UserFilter(request.query_params, queryset=users)
     serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -150,7 +142,9 @@ def get_joined_habit_items_of(request, user_id):
             {'message': f'user not found'},
             status=status.HTTP_404_NOT_FOUND)
     joined_habit_items = user.joined_habit_items.all()
-    serializer = HabitItemSerializer(joined_habit_items, many=True)
+    filter_set = HabitItemFilter(
+        request.query_params, queryset=joined_habit_items)
+    serializer = HabitItemSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -159,7 +153,8 @@ def get_joined_habit_items_of(request, user_id):
 def get_friends_of(request, user_id):
     user = get_object_or_404(User, id=user_id)
     friends = user.friends.all()
-    serializer = UserSerializer(friends, many=True)
+    filter_set = UserFilter(request.query_params, queryset=friends)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -192,6 +187,32 @@ def create_habit_item(request):
         status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@csrf_exempt
+def get_habit_item(request, habit_item_id):
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    serializer = HabitItemSerializer(habit_item)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_habit_items(request):
+    habit_items = HabitItem.objects.all()
+    filter_set = HabitItemFilter(request.query_params, queryset=habit_items)
+    serializer = HabitItemSerializer(instance=filter_set.qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_committing_users_of(request, habit_item_id):
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    committing_users = habit_item.committing_users.all()
+    filter_set = UserFilter(request.query_params, queryset=committing_users)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
@@ -204,3 +225,34 @@ def create_habit_status(request):
     return JsonResponse(
         {'error': 'invalid request'},
         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def create_habit_status_test(request):
+    serializer = HabitStatusSerializer(data=request.data)
+    if serializer.is_valid():
+        habit_status = serializer.save()
+        return Response(
+            {'message': 'habit status created successfully'},
+            status=status.HTTP_201_CREATED)
+    return Response(
+        {'error': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_habit_status(request, habit_status_id):
+    habit_status = get_object_or_404(HabitStatus, id=habit_status_id)
+    serializer = HabitStatusSerializer(habit_status)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_multiple_habit_status(request):
+    habit_status = HabitStatus.objects.all()
+    # TODO: Filtering
+    filter_set = HabitStatusFilter(request.query_params, queryset=habit_status)
+    serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
