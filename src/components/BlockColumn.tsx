@@ -2,21 +2,44 @@ import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import { useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 interface BlockColumnProps {
   title: string;  // String型 (文字列)
-  initialCount: number;  // Int型 (数値)
-  coloredBlocks?: { color: string }[];  // オプションの配列で、各オブジェクトは color という文字列プロパティを持つ
+  habitId: number;  // Int型 (数値)
 }
 
 // animated.Box の生成
 const AnimatedBox = animated(Box);
 
-const BlockColumn: React.FC<BlockColumnProps> = ({ title, initialCount,  coloredBlocks = []}) => {
-  const [ count, setCount ] = useState(initialCount);
+const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
+
+  const [ count, setCount ] = useState(0);
+  useEffect(() => {
+    // コンポーネントがマウントされたときに、初期カウントを取得
+    axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
+      .then(response => {
+        setCount(response.data.count);
+      })
+      .catch(error => {
+        console.error('Error fetching habit count:', error);
+      });
+  }, [habitId]);
 
   const handlePileUp = () => {
-    setCount((prevCount) => prevCount + 1);
+    // log_habitエンドポイントにPOSTリクエストを送信
+    axios.post(`http://localhost:8000/api/habits/log_habit/`, {
+      habit_id: habitId
+    })
+    .then(response => {
+      // カウントを増やす
+      setCount((prevCount) => prevCount + 1);
+      console.log('Habit logged successfully:', response.data);
+    })
+    .catch(error => {
+      console.error('Error logging habit:', error);
+    });
   };
 
   // 色の配列を定義

@@ -17,6 +17,9 @@ import ModalHabit from '@components/ModalHabit';
 import { useState } from "react";
 
 function Home() {
+  // 一旦ハードコード
+  const habitId = [1, 2, 3]; 
+  
   const [open, setOpen] = useState(false);
   const [habitName, setHabitName] = useState("");
 
@@ -80,20 +83,19 @@ function Home() {
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
             <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-                <BlockColumn title="英単語" initialCount={8} />
+                <BlockColumn title="英単語" habitId={habitId[0]} />
               </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
             <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
-              <BlockColumn title="筋トレ" initialCount={10} />
+              <BlockColumn title="筋トレ" habitId={habitId[1]} />
               </Paper>
             </Grid>
             <Grid item xs={12} md={4}>
             <Paper elevation={6} sx={{ padding: 2, borderRadius: 2 }}>
               <BlockColumn
                 title="チーム"
-                initialCount={0}
-                coloredBlocks={[{ color: "green" }, { color: "blue" }]}
+                habitId={habitId[2]}
               />
               </Paper>
             </Grid>

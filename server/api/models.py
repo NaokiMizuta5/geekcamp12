@@ -126,6 +126,11 @@ class HabitStatus(models.Model):
             f'{self.committed_by}'
         )
 
+class HabitLog(models.Model):
+    habit = models.ForeignKey(HabitItem, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+
 
 # Join tables
 
