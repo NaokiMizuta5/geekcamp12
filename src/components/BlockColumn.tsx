@@ -21,39 +21,45 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId}) => {
   const today = dayjs().format('YYYY-MM-DD'); // 今日の日付を取得
 
   useEffect(() => {
-    //初期カウントを取得
-    axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
-      .then(response => {
-        setCount(response.data.count);
-      })
-      .catch(error => {
-        console.error('Error fetching habit count:', error);
-      });
-
-    // committing_users 数を取得
-    axios.get(`http://localhost:8000/db/habit_item/committing_users/of/${habitId}/`)
-  .then(response => {
-    setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
-  })
-  .catch(error => {
-    console.error('Error fetching committing users:', error);
-  });
-
-    // Pile up しているユーザー数をリアルタイムで取得
-    const intervalId = setInterval(() => {
-      axios.get(`http://localhost:8000/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`)
+    if (habitId !== undefined) {
+      axios.get(`http://localhost:8000/api/habits/${habitId}/count/`)
         .then(response => {
-          setPileUpUsersCount(response.data.length);
+          setCount(response.data.count);
         })
         .catch(error => {
-          console.error('Error fetching pile up users:', error);
+          console.error("Error fetching habit count:", error);
         });
-    }, 1000); // 1秒ごとに更新
 
-    return () => clearInterval(intervalId); // コンポーネントがアンマウントされたときにクリーンアップ
-  }, [habitId]);
+      // committing_users 数を取得
+    axios.get(`http://localhost:8000/db/habit_item/committing_users/of/${habitId}/`)
+    .then(response => {
+      setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
+    })
+    .catch(error => {
+      console.error('Error fetching committing users:', error);
+    });
+  
+      // Pile up しているユーザー数をリアルタイムで取得
+      const intervalId = setInterval(() => {
+        axios.get(`http://localhost:8000/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`)
+          .then(response => {
+            setPileUpUsersCount(response.data.length);
+          })
+          .catch(error => {
+            console.error('Error fetching pile up users:', error);
+          });
+      }, 1000); // 1秒ごとに更新
+  
+      return () => clearInterval(intervalId); // コンポーネントがアンマウントされたときにクリーンアップ
+    } else {
+      // habitIdがundefinedの場合は初期値を設定
+      setCount(0);
+    }
+  }, [habitId]); // habitIdが設定されたときに再度APIを呼び出す
 
   const handlePileUp = () => {
+    // log_habitエンドポイントにPOSTリクエストを送信
+    console.log('Sending habit_id:', habitId); // デバッグ用
     axios.post(`http://localhost:8000/api/habits/log_habit/`, {
       habit_id: habitId
     })
