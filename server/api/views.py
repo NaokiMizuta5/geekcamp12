@@ -113,6 +113,19 @@ def get_users(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@csrf_exempt
+def get_friends_of(request, user_id):
+    user = User.objects.get(id=user_id)
+    if user is None:
+        return Response(
+            {'message': f'user whose id is {user_id} not found'},
+            status=status.HTTP_404_NOT_FOUND)
+    friends = user.friends.all()
+    serializer = UserSerializer(friends, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_item(request):
