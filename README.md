@@ -248,3 +248,16 @@ PUT メソッドで `db/habit_item/update/<int:habit_item_id>/` にアクセス�
 - committing_users: 登録しているユーザの ID のリスト．
 
 のいずれか 0 項目以上を付属する．
+
+## 達成状況に対する操作
+
+### 達成状況の作成
+
+POST メソッドで `progress/record/` にアクセス．
+
+リクエストとして
+
+- habit_item: 習慣項目の ID
+- committed_by: 入力したユーザの ID
+
+を付属する．達成日時は自動的に入力される．
