@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react'
 import path from 'path';
 import Pages from 'vite-plugin-pages';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
-    react(), 
+    react(),
     Pages({
-    dirs: 'src/pages', // 自動ルーティングするディレクトリ
-  }),],
+      dirs: 'src/pages',
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -22,11 +23,11 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
+    proxy: command === 'serve' ? {
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
       }
-    }
+    } : undefined
   }
-});
+}));

@@ -16,6 +16,7 @@ import BlockColumn from "@components/BlockColumn";
 import ModalHabit from '@components/ModalHabit';
 import { useState, useEffect } from "react";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 
 interface HabitItem {
@@ -31,7 +32,7 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get(`http://localhost:8000/api/db/user/joined-habit-items/of/${userId}/`)
+    axios.get(`${apiUrl}/api/db/user/joined-habit-items/of/${userId}/`)
       .then(response => {
         console.log(response.data);
         setHabitItems(response.data);
@@ -53,7 +54,7 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
 
   const handleSave = async (habitData: { name: string }) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/habits/create/', {
+      const response = await axios.post(`${apiUrl}/api/habits/create/`, {
         name: habitData.name,
         created_by: userId, // `userId` は数値
       });
