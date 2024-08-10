@@ -2,8 +2,9 @@ import json
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
+from django_filters import rest_framework as filters
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -79,6 +80,73 @@ def register_test(request):
             status=status.HTTP_201_CREATED)
     return JsonResponse(
         {'error': 'Invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    serializer = UserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_users(request):
+    users = User.objects.all()
+
+    class UserFilter(filters.FilterSet):
+        id = filters.UUIDFilter()
+
+        # Partial match
+        username = filters.CharFilter(lookup_expr='icontains')
+        email = filters.CharFilter(lookup_expr='icontains')
+        nickname = filters.CharFilter(lookup_expr='icontains')
+
+        class Meta:
+            model = User
+            fields = []
+
+    filter_set = UserFilter(request.query_params, queryset=users)
+    serializer = UserSerializer(instance=filter_set.qs, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_joined_habit_items_of(request, user_id):
+    user = User.objects.get(id=user_id)
+    if user is None:
+        return Response(
+            {'message': f'user not found'},
+            status=status.HTTP_404_NOT_FOUND)
+    joined_habit_items = user.joined_habit_items.all()
+    serializer = HabitItemSerializer(joined_habit_items, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_friends_of(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    friends = user.friends.all()
+    serializer = UserSerializer(friends, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@csrf_exempt
+def update_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    serializer = UserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'user updated successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
         status=status.HTTP_400_BAD_REQUEST)
 
 
