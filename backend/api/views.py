@@ -20,18 +20,21 @@ from api.filters import (
     HabitLogFilter,
     HabitStatusFilter,
     UserFilter,
+    HabitTeamLogFilter,
 )
 from api.models import (
     HabitItem,
     HabitStatus,
     User,
-    HabitLog
+    HabitLog,
+    HabitTeamLog,
 )
 from api.serializers import (
     HabitItemSerializer,
     HabitLogSerializer,
     HabitStatusSerializer,
     UserSerializer,
+    HabitTeamLogSerializer,
 )
 
 
@@ -378,6 +381,21 @@ def search_habit_log_by(habit_status):
     return filter_set.qs
 
 
+def search_habit_team_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    date_committed = habit_status_data.get('date_committed')
+    query = {
+        'habit_item': habit_item,
+        'date_committed': date_committed,
+    }
+
+    habit_team_logs = HabitTeamLog.objects.all()
+    filter_set = HabitTeamLogFilter(query, queryset=habit_team_logs)
+    return filter_set.qs
+
+
 def create_habit_log_by(habit_status):
     habit_status_data = HabitStatusSerializer(habit_status).data
 
@@ -416,6 +434,41 @@ def create_habit_log_by(habit_status):
                 prev_serializer.save()
 
 
+def create_habit_team_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    date_committed = habit_status.date_committed - timedelta(days=1)
+    query = {
+        'habit_item': habit_item,
+        'date_committed': date_committed.strftime('%Y-%m-%d'),
+    }
+
+    habit_team_logs = HabitTeamLog.objects.all()
+    filter_set = HabitTeamLogFilter(query, queryset=habit_team_logs)
+
+    data = {
+        'habit_item': habit_item,
+        'date_committed': habit_status.date_committed.strftime('%Y-%m-%d'),
+    }
+    if filter_set.qs:
+        prev_habit_team_log = filter_set.qs.first()
+        data['count'] = prev_habit_team_log.count + 1
+
+    # Create a habit log
+    curr_serializer = HabitTeamLogSerializer(data=data)
+    if curr_serializer.is_valid():
+        curr = curr_serializer.save()
+
+        # Update the previous habit log's next
+        if filter_set.qs:
+            prev_serializer = HabitTeamLogSerializer(
+                filter_set.qs.first(), data={'next': curr.id},
+                partial=True)
+            if prev_serializer.is_valid():
+                prev_serializer.save()
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
@@ -427,6 +480,11 @@ def create_habit_status(request):
         habit_logs = search_habit_log_by(habit_status)
         if not habit_logs:
             create_habit_log_by(habit_status)
+
+        # Check if a habit team log already exists
+        habit_team_logs = search_habit_team_log_by(habit_status)
+        if not habit_team_logs:
+            create_habit_team_log_by(habit_status)
 
         return Response(
             {'message': 'habit status created successfully'},
@@ -457,12 +515,33 @@ def get_multiple_habit_status(request):
 def get_counts(request):
     habit_logs = HabitLog.objects.all()
     filter_set = HabitLogFilter(request.query_params, queryset=habit_logs)
-    serializer = HabitStatusSerializer(instance=filter_set.qs, many=True)
+    serializer = HabitLogSerializer(instance=filter_set.qs, many=True)
 
     counts = []
     for habit_log in serializer.data:
         if habit_log['next'] is None:
             counts.append(habit_log['count'])
+
+    response = {
+        'counts': counts,
+        'max': max(counts),
+        'latest': counts[-1],
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def get_team_counts(request):
+    habit_team_logs = HabitTeamLog.objects.all()
+    filter_set = HabitTeamLogFilter(
+        request.query_params, queryset=habit_team_logs)
+    serializer = HabitTeamLogSerializer(instance=filter_set.qs, many=True)
+
+    counts = []
+    for habit_team_log in serializer.data:
+        if habit_team_log['next'] is None:
+            counts.append(habit_team_log['count'])
 
     response = {
         'counts': counts,

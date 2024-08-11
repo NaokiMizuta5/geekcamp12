@@ -4,7 +4,8 @@ from api.models import (
     HabitItem,
     HabitStatus,
     User,
-    HabitLog
+    HabitLog,
+    HabitTeamLog,
 )
 
 
@@ -126,13 +127,34 @@ class HabitLogSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print("CR", validated_data)
         habit_log = HabitLog.objects.create(**validated_data)
         habit_log.save()
         return habit_log
 
     def update(self, instance, validated_data):
-        print("UP", validated_data)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class HabitTeamLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HabitTeamLog
+        fields = [
+            'id',
+            'habit_item',
+            'date_committed',
+            'count',
+            'next',
+        ]
+
+    def create(self, validated_data):
+        habit_log = HabitLog.objects.create(**validated_data)
+        habit_log.save()
+        return habit_log
+
+    def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
