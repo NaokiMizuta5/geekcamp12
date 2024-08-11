@@ -17,7 +17,8 @@ interface Friend {
     longestStreak: number;
     habits: number;
     total: number;
-    avatar: string;
+    avatarColor: string; // 色を指定するためのプロパティ
+    initial: string; // 頭文字を表示するためのプロパティ
 }
 
 const Friends: React.FC<{ userId: number }> = ({ userId }) => {
@@ -25,9 +26,9 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
     const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
     const [addFriendOpen, setAddFriendOpen] = useState(false);
     const [friends, setFriends] = useState<Friend[]>([
-        { id: 1, name: 'ハチムラ ルイ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar1.png' },
-        { id: 2, name: 'カワムラ ユウキ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar2.png' },
-        { id: 3, name: 'ワタナベ ユウタ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar3.png' }
+        { id: 1, name: 'ロクムラ レイ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatarColor: '#f44336', initial: 'R' },
+        { id: 2, name: 'カワムロ コウキ', progress: 50, longestStreak: 18, habits: 8, total: 98, avatarColor: '#2196f3', initial: 'K' },
+        { id: 3, name: 'ワタベ ユウタ', progress: 30, longestStreak: 30, habits: 15, total: 150, avatarColor: '#4caf50', initial: 'W' }
     ]);
 
     const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -80,7 +81,8 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
                 longestStreak: 0,
                 habits: 0,
                 total: 0,
-                avatar: 'path/to/new_avatar.png'
+                avatarColor: '#ff9800', // 追加フレンドの色
+                initial: 'N' // 新しいフレンドの頭文字
             };
 
             setFriends(prevFriends => [...prevFriends, newFriend]);
@@ -151,7 +153,9 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
             >
                 {/* User profile section */}
                 <div className="user-profile">
-                    <Avatar src={userAvatar} alt={userName} sx={{ width: 56, height: 56 }} />
+                    <Avatar sx={{ bgcolor: '#ff9800', width: 56, height: 56 }}>
+                        S
+                    </Avatar>
                     <div className="user-info">
                         <Typography className="username" variant="h6">{userName}</Typography>
                         <Typography className="user-id" variant="subtitle1">User Id: @naotaro</Typography>
@@ -184,7 +188,9 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
                                 <TableRow key={friend.id}>
                                     <TableCell component="th" scope="row">
                                         <div className="friend-info">
-                                            <img src={friend.avatar} alt={`${friend.name}'s avatar`} className="friend-avatar" />
+                                            <Avatar sx={{ bgcolor: friend.avatarColor, width: 40, height: 40 }}>
+                                                {friend.initial}
+                                            </Avatar>
                                             <span>{friend.name}</span>
                                         </div>
                                     </TableCell>
