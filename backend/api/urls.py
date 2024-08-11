@@ -37,6 +37,12 @@ urlpatterns = [
     path('db/user/update/<int:user_id>/',
          views.update_user,
          name='update_user'),
+    path('db/user/add-friends-to/<int:user_id>/',
+         views.add_friends_to,
+         name='add_friends_to'),
+    path('db/user/remove-friends-from/<int:user_id>/',
+         views.remove_friends_from,
+         name='remove_friends_from'),
 
     path('db/habit_item/get/<int:habit_item_id>/',
          views.get_habit_item,
@@ -47,6 +53,13 @@ urlpatterns = [
     path('db/habit_item/committing_users/of/<int:habit_item_id>/',
          views.get_committing_users_of,
          name='get_committing_users_of'),
+    path('db/habit_item/piling_up_users/of/<int:habit_item_id>/at/'
+         '<str:date_committed>/',
+         views.get_piling_up_users_of,
+         name='get_piling_up_users_of'),
+    path('db/habit_item/update/<int:habit_item_id>/',
+         views.update_habit_item,
+         name='update_habit_item'),
 
     path('db/habit_status/get/<int:habit_status_id>/',
          views.get_habit_status,
@@ -58,8 +71,11 @@ urlpatterns = [
     path('habits/create/', views.create_habit_item, name='create_habit_item'),
     path('habits/log_habit/', views.log_habit, name='log_habit'),
     path('habits/<int:pk>/count/', views.count, name='count'),  # habit_idを使ってcountを取得
-    
-    # Progress関連
-    path('progress/record/', views.create_habit_status, name='create_habit_status'),
-]
 
+    # Progress関連
+    path('progress/record/',
+         views.create_habit_status,
+         name='create_habit_status'),
+
+    path('db/counts/get/', views.get_counts, name='get_counts'),
+]
