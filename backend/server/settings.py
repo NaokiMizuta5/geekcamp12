@@ -36,11 +36,9 @@ STATIC_ROOT = BASE_DIR / 'backend' / 'staticfiles'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [    
-    'localhost',
-    '127.0.0.1',
-    '.vercel.app'
-]
+import os
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
