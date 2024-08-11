@@ -524,8 +524,8 @@ def get_counts(request):
 
     response = {
         'counts': counts,
-        'max': max(counts),
-        'latest': counts[-1],
+        'max': max(counts) if counts else 0,
+        'latest': counts[-1] if counts else 0,
     }
     return Response(response, status=status.HTTP_200_OK)
 
@@ -545,7 +545,7 @@ def get_team_counts(request):
 
     response = {
         'counts': counts,
-        'max': max(counts),
-        'latest': counts[-1],
+        'max': max(counts) if counts else 0,
+        'latest': counts[-1] if counts else 0,
     }
     return Response(response, status=status.HTTP_200_OK)

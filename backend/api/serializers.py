@@ -150,7 +150,7 @@ class HabitTeamLogSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        habit_log = HabitLog.objects.create(**validated_data)
+        habit_log = HabitTeamLog.objects.create(**validated_data)
         habit_log.save()
         return habit_log
 
