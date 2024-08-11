@@ -64,10 +64,9 @@ class HabitItemSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
-            'frequency',
             'created_by',
-            'committing_users',
-            'committed_habit_status',
+            # 'committing_users',
+            # 'committed_habit_status',
         ]
 
     def create(self, validated_data):
