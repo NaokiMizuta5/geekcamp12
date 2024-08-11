@@ -6,7 +6,7 @@
 .friend-avatar {
   width: 40px;
   height: 40px;
-  margin-right: 8px; /* ここでアイコンと名前の間の空白を調整 */
+  margin-right: 190px; /* ここでアイコンと名前の間の空白を調整 */
   border-radius: 50%;
 }
 
