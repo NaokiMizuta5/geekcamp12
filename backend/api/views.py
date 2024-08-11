@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 import json
+from django.utils import timezone
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
@@ -15,6 +17,7 @@ from django.shortcuts import get_object_or_404
 
 from api.filters import (
     HabitItemFilter,
+    HabitLogFilter,
     HabitStatusFilter,
     UserFilter,
     HabitLogFilter
@@ -27,6 +30,7 @@ from api.models import (
 )
 from api.serializers import (
     HabitItemSerializer,
+    HabitLogSerializer,
     HabitStatusSerializer,
     UserSerializer,
 )
@@ -48,9 +52,10 @@ class HabitItemViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def count(request, pk=None):
-    habit = get_object_or_404(HabitItem, pk=pk)
-    count = HabitLog.objects.filter(habit=habit).count()  # habit_item -> habit に修正
+    habit_item = get_object_or_404(HabitItem, pk=pk)
+    count = HabitLog.objects.filter(habit_item=habit_item).count()  # habit_item -> habit に修正
     return Response({'count': count})
+
 
 @api_view(['POST'])
 def log_habit(request):
@@ -63,11 +68,14 @@ def log_habit(request):
         habit_item = get_object_or_404(HabitItem, id=habit_id)
         print(f"Found HabitItem: {habit_item}")
 
+        date_committed=timezone.now()  # 現在の日付を設定
+        committed_by = request.user  # ログインしているユーザーを取得
+
         # HabitLog を作成して保存
-        habit_log = HabitLog(habit=habit_item)
+        habit_log = HabitLog(habit_item=habit_item, date_committed=date_committed)
         habit_log.save()
         print("HabitLog saved successfully")
-        
+
         # 成功レスポンスを返す
         return Response({
             'message': 'Habit logged successfully',
@@ -79,7 +87,6 @@ def log_habit(request):
         # エラーの詳細をサーバーログに記録
         print(f"Error occurred: {e}")
         return Response({'error': str(e)}, status=500)
-
 
 
 class HabitStatusViewSet(viewsets.ModelViewSet):
@@ -179,6 +186,54 @@ def update_user(request, user_id):
         serializer.save()
         return Response(
             {'message': 'user updated successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@csrf_exempt
+def add_friends_to(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    friends = UserSerializer(user).data['friends']
+    friends_added = request.data.get('friends_added')
+    if friends_added is None:
+        return Response(
+            {'message': 'no friends added'}, status=status.HTTP_200_OK)
+    new_friends = list(set(friends) | set(friends_added))
+    data = {
+        'friends': new_friends
+    }
+    serializer = UserSerializer(user, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'friends added successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@csrf_exempt
+def remove_friends_from(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    friends = UserSerializer(user).data['friends']
+    friends_removed = request.data.get('friends_removed')
+    if friends_removed is None:
+        return Response(
+            {'message': 'no friends removed'}, status=status.HTTP_200_OK)
+    new_friends = list(set(friends) - set(friends_removed))
+    data = {
+        'friends': new_friends
+    }
+    serializer = UserSerializer(user, data=data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'friends removed successfully'},
             status=status.HTTP_200_OK)
     return Response(
         {'message': 'invalid request'},
@@ -291,26 +346,89 @@ def get_piling_up_users_of(request, habit_item_id, date_committed):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['PUT'])
+@csrf_exempt
+def update_habit_item(request, habit_item_id):
+    habit_item = get_object_or_404(HabitItem, id=habit_item_id)
+    serializer = HabitItemSerializer(
+        habit_item, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'habit item updated successfully'},
+            status=status.HTTP_200_OK)
+    return Response(
+        {'message': 'invalid request'},
+        status=status.HTTP_400_BAD_REQUEST)
+
+
+def search_habit_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    committed_by = habit_status_data.get('committed_by')
+    date_committed = habit_status_data.get('date_committed')
+    query = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': date_committed,
+    }
+
+    habit_logs = HabitLog.objects.all()
+    filter_set = HabitLogFilter(query, queryset=habit_logs)
+    return filter_set.qs
+
+
+def create_habit_log_by(habit_status):
+    habit_status_data = HabitStatusSerializer(habit_status).data
+
+    habit_item = habit_status_data.get('habit_item')
+    committed_by = habit_status_data.get('committed_by')
+    date_committed = habit_status.date_committed - timedelta(days=1)
+    query = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': date_committed.strftime('%Y-%m-%d'),
+    }
+
+    habit_logs = HabitLog.objects.all()
+    filter_set = HabitLogFilter(query, queryset=habit_logs)
+
+    data = {
+        'habit_item': habit_item,
+        'committed_by': committed_by,
+        'date_committed': habit_status.date_committed.strftime('%Y-%m-%d'),
+    }
+    if filter_set.qs:
+        prev_habit_log = filter_set.qs.first()
+        data['count'] = prev_habit_log.count + 1
+
+    # Create a habit log
+    curr_serializer = HabitLogSerializer(data=data)
+    if curr_serializer.is_valid():
+        curr = curr_serializer.save()
+
+        # Update the previous habit log's next
+        if filter_set.qs:
+            prev_serializer = HabitLogSerializer(
+                filter_set.qs.first(), data={'next': curr.id},
+                partial=True)
+            if prev_serializer.is_valid():
+                prev_serializer.save()
+
+
 @api_view(['POST'])
 @csrf_exempt
 def create_habit_status(request):
     serializer = HabitStatusSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(
-            {'message': 'habit status created successfully'},
-            status=status.HTTP_201_CREATED)
-    return JsonResponse(
-        {'error': 'invalid request'},
-        status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-@csrf_exempt
-def create_habit_status_test(request):
-    serializer = HabitStatusSerializer(data=request.data)
-    if serializer.is_valid():
         habit_status = serializer.save()
+
+        # Check if a habit log already exists
+        habit_logs = search_habit_log_by(habit_status)
+        if not habit_logs:
+            create_habit_log_by(habit_status)
+
         return Response(
             {'message': 'habit status created successfully'},
             status=status.HTTP_201_CREATED)

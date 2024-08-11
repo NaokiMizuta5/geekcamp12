@@ -54,7 +54,7 @@ class HabitItem(models.Model):
         null=False,
         default='Some habit',
     )
-    
+
     # TODO: Implement this
     habit_notification_setting = ...
     habit_sharing_settings = ...
@@ -144,9 +144,10 @@ class HabitStatus(models.Model):
             f'{self.committed_by}'
         )
 
+
 class HabitLog(models.Model):
     habit_item = models.ForeignKey(
-        HabitItem,
+        to=HabitItem,
         on_delete=models.CASCADE,
         related_name='habit_logs',
         verbose_name='habit item',
@@ -186,8 +187,6 @@ class HabitLog(models.Model):
             f'count={self.count}; '
             f'next={self.next}; '
         )
-
-
 
 
 # Join tables

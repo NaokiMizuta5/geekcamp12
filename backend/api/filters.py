@@ -52,6 +52,7 @@ class HabitStatusFilter(filters.FilterSet):
         model = HabitStatus
         fields = ['date_committed']
 
+
 class HabitLogFilter(filters.FilterSet):
     id = filters.UUIDFilter()
 
