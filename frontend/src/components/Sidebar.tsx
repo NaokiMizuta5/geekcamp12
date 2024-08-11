@@ -5,7 +5,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';  // or AppsIcon
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo1.png'; // ロゴ画像のパスを適宜修正してください
 
-const drawerWidth = 300; // 幅を広くする
+const drawerWidth = 280; // 幅を広くする
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -37,13 +37,13 @@ function Sidebar() {
       </Box>
       <Divider />
       <List>
-        <ListItem disablePadding sx={{ marginBottom: 2 }}>
+        <ListItem disablePadding sx={{ marginBottom: 1 }}>
           <ListItemButton 
             onClick={() => navigate('/Home')}
             sx={{ 
               backgroundColor: location.pathname === '/Home' ? '#1976d2' : 'inherit', // 選択されたときに青にする
               color: location.pathname === '/Home' ? '#FFFFFF' : 'inherit', // 選択されたときに文字を白にする
-              padding: '25px 40px' // ボタンのパディングを増やして広げる
+              padding: '18px 40px' // ボタンのパディングを増やして広げる
             }}
           >
             <ListItemIcon sx={{ color: location.pathname === '/Home' ? '#FFFFFF' : 'inherit' }}>
@@ -58,13 +58,13 @@ function Sidebar() {
             />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding sx={{ marginBottom: 2 }}>
+        <ListItem disablePadding sx={{ marginBottom: 1 }}>
           <ListItemButton 
             onClick={() => navigate('/friends')}
             sx={{ 
               backgroundColor: location.pathname === '/friends' ? '#1976d2' : 'inherit', // 選択されたときに青にする
               color: location.pathname === '/friends' ? '#FFFFFF' : 'inherit', // 選択されたときに文字を白にする
-              padding: '25px 40px' // ボタンのパディングを増やして広げる
+              padding: '18px 40px' // ボタンのパディングを増やして広げる
             }}
           >
             <ListItemIcon sx={{ color: location.pathname === '/friends' ? '#FFFFFF' : 'inherit' }}>
@@ -79,13 +79,13 @@ function Sidebar() {
             />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding>
+        <ListItem disablePadding sx={{ marginBottom: 1 }}>
           <ListItemButton 
             onClick={() => navigate('/settings')}
             sx={{ 
               backgroundColor: location.pathname === '/settings' ? '#1976d2' : 'inherit', // 選択されたときに青にする
               color: location.pathname === '/settings' ? '#FFFFFF' : 'inherit', // 選択されたときに文字を白にする
-              padding: '25px 40px' // ボタンのパディングを増やして広げる
+              padding: '18px 40px' // ボタンのパディングを増やして広げる
             }}
           >
             <ListItemIcon sx={{ color: location.pathname === '/settings' ? '#FFFFFF' : 'inherit' }}>

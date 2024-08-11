@@ -135,7 +135,7 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
     };
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3, backgroundColor: '#f0f4f8', marginLeft: '-600px', marginTop: '40px' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', marginLeft: '-700px', marginTop: '120px' }}>
             {/* Sidebarがここに来る場合、適切にコンポーネントをインポートしてください */}
             {/* <Sidebar /> */}
 
@@ -148,7 +148,6 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
                     width: '100%',
                     maxWidth: 'calc(100vw - 240px)', // 240pxはSidebarの幅
                     overflowX: 'hidden',
-                    margin: '0 auto',
                 }}
             >
                 {/* User profile section */}
