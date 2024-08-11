@@ -4,6 +4,7 @@ services:
     env: python
     buildCommand: chmod +x build.sh && ./build.sh
     startCommand: cd backend && gunicorn server.wsgi:application
+    staticPublishPath: frontend/dist
     envVars:
       - key: DEBUG
         value: False
