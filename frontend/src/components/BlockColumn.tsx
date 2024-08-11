@@ -102,7 +102,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       if (filteredUserIds.length === 0) {
         filteredUserIds = [userId];
       }
-      console.log('Filtered User IDs(includeMe):', filteredUserIds);
+      console.log('Filtered User IDs(include):', filteredUserIds);
   
       // Step 3: multiple_habit_status エンドポイントを使用して、リストの全ユーザーが Pile Up しているか確認
       const habitStatusResponse = await axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
@@ -115,8 +115,8 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       const habitStatuses = habitStatusResponse.data;
       console.log('Habit Statuses:', habitStatuses);
 
-      // pileUpUsersCount を habitStatuses の長さで更新
-      setPileUpUsersCount(habitStatuses.length);
+      // committingUsersCount を habitStatuses の長さで更新
+      setCommittingUsersCount(habitStatuses.length);
   
       // フレンド全員が Pile Up している場合に最大連続日数を取得してカウントを更新
       if (habitStatuses.length === filteredUserIds.length) {
