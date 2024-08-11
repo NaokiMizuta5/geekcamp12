@@ -34,7 +34,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'backend' / 'staticfiles'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 import os
 
@@ -67,7 +67,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -79,7 +82,7 @@ ROOT_URLCONF = 'server.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
