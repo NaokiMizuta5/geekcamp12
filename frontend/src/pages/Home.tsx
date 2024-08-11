@@ -6,7 +6,8 @@ import {
   IconButton,
   Button,
   Box,
-  Paper
+  Paper,
+  CircularProgress
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,6 +16,7 @@ import BlockColumn from "@components/BlockColumn";
 import ModalHabit from '@components/ModalHabit';
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 
@@ -88,11 +90,22 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
             </IconButton>
             <Typography
               variant="h6"
-              sx={{ flexGrow: 1, color: "black", textAlign: "left" }}
+              sx={{ flexGrow: 1, color: "#333", textAlign: "left", fontWeight: 'bold' }}
             >
               シミズ ナオタロウ's Habits
             </Typography>
-            <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleClickOpen}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleClickOpen}
+              sx={{
+                backgroundColor: '#1976d2',
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                }
+              }}
+            >
               New Habit
             </Button>
           </Toolbar>
@@ -100,8 +113,10 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
 
         <Container sx={{ flexGrow: 1 }}>
         {isLoading ? (
-          <Typography>Loading...</Typography>
-        ) : (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <CircularProgress />
+            </Box>
+          ) : (
           <Box
               sx={{
                 display: 'flex',
@@ -110,13 +125,29 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
                 overflowX: 'auto',
                 padding: 1,
                 paddingBottom: 3,
+                '&::-webkit-scrollbar': {
+                  height: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: '#1976d2',
+                  borderRadius: '8px',
+                },
               }}
             >
               {habitItems.map((habit) => (
                 <Paper
                   key={habit.id}
                   elevation={6}
-                  sx={{ padding: 2, borderRadius: 2, minWidth: 300 }}
+                  sx={{
+                    padding: 2,
+                    borderRadius: 2,
+                    minWidth: 300,
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
+                    '&:hover': {
+                      boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.2)',
+                    }
+                  }}
                 >
                   <BlockColumn title={habit.name} habitId={habit.id} userId={userId} />
                 </Paper>
