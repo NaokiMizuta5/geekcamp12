@@ -133,116 +133,132 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
     };
 
     return (
-        <div className="friends-container">
-            {/* User profile section */}
-            <div className="user-profile">
-                <Avatar src={userAvatar} alt={userName} sx={{ width: 56, height: 56 }} />
-                <div className="user-info">
-                    <Typography className="username" variant="h6">{userName}</Typography>
-                    <Typography className="user-id" variant="subtitle1">User Id: @naotaro</Typography>
-                </div>
-                <IconButton className="edit-button" onClick={handleEditProfileOpen}>
-                    <EditIcon />
-                </IconButton>
-            </div>
+        <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3, backgroundColor: '#f0f4f8', marginLeft: '-600px', marginTop: '40px' }}>
+            {/* Sidebarがここに来る場合、適切にコンポーネントをインポートしてください */}
+            {/* <Sidebar /> */}
 
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 800 }} aria-label="friend table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell align="left">Status</TableCell>
-                            <TableCell align="right">
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<AddIcon />}
-                                    onClick={handleAddFriendOpen}
-                                >
-                                    Add new friend
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {friends.map((friend) => (
-                            <TableRow key={friend.id}>
-                                <TableCell component="th" scope="row">
-                                    <div className="friend-info">
-                                        <img src={friend.avatar} alt={`${friend.name}'s avatar`} className="friend-avatar" />
-                                        <span>{friend.name}</span>
-                                    </div>
-                                </TableCell>
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    width: '100%',
+                    maxWidth: 'calc(100vw - 240px)', // 240pxはSidebarの幅
+                    overflowX: 'hidden',
+                    margin: '0 auto',
+                }}
+            >
+                {/* User profile section */}
+                <div className="user-profile">
+                    <Avatar src={userAvatar} alt={userName} sx={{ width: 56, height: 56 }} />
+                    <div className="user-info">
+                        <Typography className="username" variant="h6">{userName}</Typography>
+                        <Typography className="user-id" variant="subtitle1">User Id: @naotaro</Typography>
+                    </div>
+                    <IconButton className="edit-button" onClick={handleEditProfileOpen}>
+                        <EditIcon />
+                    </IconButton>
+                </div>
+
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 800 }} aria-label="friend table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell align="left">Status</TableCell>
                                 <TableCell align="right">
-                                    <div className="friend-status">
-                                        <CircularProgressBar percentage={friend.progress} />
-                                        <div className="friend-status-details">
-                                            <div>
-                                                <span>Longest Streak</span>
-                                                <span>{friend.longestStreak}</span>
-                                            </div>
-                                            <div>
-                                                <span>Habits</span>
-                                                <span>{friend.habits}</span>
-                                            </div>
-                                            <div>
-                                                <span>Total</span>
-                                                <span>{friend.total}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Button onClick={() => handleOpen(friend)}>
-                                        <span className="dots">•••</span>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<AddIcon />}
+                                        onClick={handleAddFriendOpen}
+                                    >
+                                        Add new friend
                                     </Button>
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {friends.map((friend) => (
+                                <TableRow key={friend.id}>
+                                    <TableCell component="th" scope="row">
+                                        <div className="friend-info">
+                                            <img src={friend.avatar} alt={`${friend.name}'s avatar`} className="friend-avatar" />
+                                            <span>{friend.name}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <div className="friend-status">
+                                            <CircularProgressBar percentage={friend.progress} />
+                                            <div className="friend-status-details">
+                                                <div>
+                                                    <span>Longest Streak</span>
+                                                    <span>{friend.longestStreak}</span>
+                                                </div>
+                                                <div>
+                                                    <span>Habits</span>
+                                                    <span>{friend.habits}</span>
+                                                </div>
+                                                <div>
+                                                    <span>Total</span>
+                                                    <span>{friend.total}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Button onClick={() => handleOpen(friend)}>
+                                            <span className="dots">•••</span>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-            <AddFriendModal
-                open={addFriendOpen}
-                onClose={handleAddFriendClose}
-                onSave={handleAddFriendSubmit}
-            />
+                <AddFriendModal
+                    open={addFriendOpen}
+                    onClose={handleAddFriendClose}
+                    onSave={handleAddFriendSubmit}
+                />
 
-            <FriendDeleteModal
-                open={open}
-                onClose={handleClose}
-                onDelete={handleDeleteFriend}
-                friendName={selectedFriend ? selectedFriend.name : ''}
-            />
+                <FriendDeleteModal
+                    open={open}
+                    onClose={handleClose}
+                    onDelete={handleDeleteFriend}
+                    friendName={selectedFriend ? selectedFriend.name : ''}
+                />
 
-            <Modal open={editProfileOpen} onClose={handleEditProfileClose}>
-                <div className="modal-content">
-                    <h2>Edit Profile</h2>
-                    <TextField
-                        label="Username"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        type="file"
-                        onChange={handleFileChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-                        <Button onClick={handleEditProfileClose} color="secondary" variant="outlined">
-                            Cancel
-                        </Button>
-                        <Button onClick={handleProfileSave} color="primary" variant="contained">
-                            Save
-                        </Button>
+                <Modal open={editProfileOpen} onClose={handleEditProfileClose}>
+                    <div className="modal-content">
+                        <h2>Edit Profile</h2>
+                        <TextField
+                            label="Username"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            type="file"
+                            onChange={handleFileChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                            <Button onClick={handleEditProfileClose} color="secondary" variant="outlined">
+                                Cancel
+                            </Button>
+                            <Button onClick={handleProfileSave} color="primary" variant="contained">
+                                Save
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            </Modal>
-        </div>
+                </Modal>
+            </Box>
+        </Box>
     );
 };
 
