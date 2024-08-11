@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+from django.utils import timezone
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
@@ -66,8 +67,11 @@ def log_habit(request):
         habit_item = get_object_or_404(HabitItem, id=habit_id)
         print(f"Found HabitItem: {habit_item}")
 
+        date_committed=timezone.now()  # 現在の日付を設定
+        committed_by = request.user  # ログインしているユーザーを取得
+
         # HabitLog を作成して保存
-        habit_log = HabitLog(habit_item=habit_item)
+        habit_log = HabitLog(habit_item=habit_item, date_committed=date_committed)
         habit_log.save()
         print("HabitLog saved successfully")
 
