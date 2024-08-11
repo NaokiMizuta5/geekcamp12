@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: geekcamp12
+    env: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: cd backend && gunicorn server.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com,localhost,127.0.0.1
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: geekcamp12_db
+          property: connectionString
+
+databases:
+  - name: geekcamp12_db
+    databaseName: geekcamp12
+    user: geekcamp12
