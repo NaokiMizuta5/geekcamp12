@@ -23,6 +23,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('your_api_app.urls')),  # APIのURLパターンがある場合
+    path('api/', include('api.urls')),  # APIのURLパターンがある場合  # your_api_app -> api
     re_path(r'^.*', TemplateView.as_view(template_name='index.html')),  # Reactアプリのエントリーポイント
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

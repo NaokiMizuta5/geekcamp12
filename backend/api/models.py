@@ -38,6 +38,13 @@ class User(AbstractUser):
         blank=True,
     )
 
+    icon = models.ImageField(
+        verbose_name='icon',
+        upload_to='img/upload/',
+        blank=True,
+        null=True,
+    )
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['nickname']
 

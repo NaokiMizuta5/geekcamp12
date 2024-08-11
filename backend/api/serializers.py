@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             'friends',
             'created_habit_items',
             'committed_habit_status',
+            'icon',
         ]
         extra_kwargs = {
             'password': {'write_only': True}
