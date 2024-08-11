@@ -95,8 +95,14 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       const friendIds: number[] = friendsResponse.data.map((friend: any) => friend.id);
       console.log('Friend IDs:', friendIds);
   
-      const filteredUserIds = pilingUpUserIds.filter(userId => friendIds.includes(userId));
+      let filteredUserIds = pilingUpUserIds.filter(userId => friendIds.includes(userId));
       console.log('Filtered User IDs:', filteredUserIds);
+
+      // フレンドがいない場合、ユーザー自身を含める
+      if (filteredUserIds.length === 0) {
+        filteredUserIds = [userId];
+      }
+      console.log('Filtered User IDs(includeMe):', filteredUserIds);
   
       // Step 3: multiple_habit_status エンドポイントを使用して、リストの全ユーザーが Pile Up しているか確認
       const habitStatusResponse = await axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
