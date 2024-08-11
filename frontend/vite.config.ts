@@ -31,7 +31,7 @@ export default defineConfig(({ command }) => ({
     } : undefined
   },
   build: {
-    outDir: '../backend/static/react_build',
-    assetsDir: '',
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
 }));

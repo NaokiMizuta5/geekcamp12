@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,10 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l1a2#kdztn4@_pa457vpo(caa=*(zep&(ln340@uljkeiz+=#0'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static', 'react_build'),
+    BASE_DIR / 'frontend' / 'dist',
 ]
+
+STATIC_ROOT = BASE_DIR / 'backend' / 'staticfiles'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
