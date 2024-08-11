@@ -54,11 +54,6 @@ class HabitItem(models.Model):
         null=False,
         default='Some habit',
     )
-    frequency = models.PositiveIntegerField(
-        verbose_name='frequency',
-        blank=False,
-        null=False,
-    )
 
     # TODO: Implement this
     habit_notification_setting = ...
