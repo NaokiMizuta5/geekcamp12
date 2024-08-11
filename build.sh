@@ -1,10 +1,18 @@
 #!/bin/bash
+set -e  # エラーが発生したら即座に終了
 
-# React のビルド
+# フロントエンドのビルド
+echo "Building frontend..."
 cd frontend
-npm install
-npm run build
+yarn install
+yarn build
 
-# Django の静的ファイル収集
+# バックエンドの準備
+echo "Preparing backend..."
 cd ../backend
+pip install -r requirements.txt
 python manage.py collectstatic --noinput
+python manage.py migrate
+
+# ルートディレクトリに戻る
+cd ..
