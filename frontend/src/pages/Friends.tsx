@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CircularProgressBar from '../components/CircularProgressBar';
 import './Friends.css';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Avatar, Typography, IconButton, Modal, TextField, Box } from '@mui/material';
@@ -29,7 +29,7 @@ const Friends: React.FC<{ userId: number }> = ({ userId }) => {
         { id: 2, name: 'カワムラ ユウキ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar2.png' },
         { id: 3, name: 'ワタナベ ユウタ', progress: 75, longestStreak: 25, habits: 10, total: 123, avatar: 'path/to/avatar3.png' }
     ]);
-    const [isLoading, setIsLoading] = useState(false);
+
     const [editProfileOpen, setEditProfileOpen] = useState(false);
 
     // User information state

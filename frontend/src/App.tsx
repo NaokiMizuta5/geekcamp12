@@ -8,7 +8,7 @@ import Sidebar from "@components/Sidebar";
 import { Box } from '@mui/material';
 import './App.css';
 
-const drawerWidth = 240; // サイドバーの幅を指定
+const drawerWidth = 300; // サイドバーの幅を指定
 
 function App() {
   return (
@@ -46,7 +46,7 @@ function MainContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home userId={userId}/>} />
-        <Route path="/friends" element={<Friends />} />
+        <Route path="/friends" element={<Friends userId={userId}/>} />
         <Route path="/settings" element={<Settings />} />
         </Routes>
       </Box>

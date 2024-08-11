@@ -76,7 +76,6 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', padding: 3, backgroundColor: '#f0f4f8' }}>
-      <Sidebar />
 
       <Box
         component="main"
@@ -87,9 +86,10 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
           flexDirection: "column",
         }}
       >
+        <Sidebar />
         <AppBar
           position="static"
-          sx={{ marginBottom: 4, width: "100%", backgroundColor: "#ffffff", boxShadow: 'none', borderBottom: '1px solid #ddd' }}
+          sx={{ marginTop: 2, marginBottom: 4, width: "100%", backgroundColor: "#ffffff", boxShadow: 'none', borderBottom: '1px solid #ddd' }}
         >
           <Toolbar>
             <IconButton
