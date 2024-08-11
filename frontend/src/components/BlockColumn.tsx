@@ -117,7 +117,18 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
 
       // committingUsersCount を habitStatuses の長さで更新
       setCommittingUsersCount(habitStatuses.length);
-  
+      
+      // ユーザー自身の達成状況があるか確認
+      const userHasCommitted = habitStatuses.some((status: any) => status.committed_by === userId);
+
+      // 達成状況がない場合にのみ記録
+      if (!userHasCommitted) {
+        await axios.post(`${apiUrl}/progress/record/`, {
+          habit_item: habitId,
+          committed_by: userId
+        });
+      }
+
       // フレンド全員が Pile Up している場合に最大連続日数を取得してカウントを更新
       if (habitStatuses.length === filteredUserIds.length) {
       // 最新の count を取得して更新
