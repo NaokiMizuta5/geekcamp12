@@ -36,9 +36,7 @@ STATIC_ROOT = BASE_DIR / 'backend' / 'staticfiles'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-import os
-
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]').split(',')
 
 
 # Application definition

@@ -108,9 +108,12 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       });
       const habitStatuses = habitStatusResponse.data;
       console.log('Habit Statuses:', habitStatuses);
+
+      // pileUpUsersCount を habitStatuses の長さで更新
+      setPileUpUsersCount(habitStatuses.length);
   
       // フレンド全員が Pile Up している場合に最大連続日数を取得してカウントを更新
-    if (habitStatuses.length === filteredUserIds.length) {
+      if (habitStatuses.length === filteredUserIds.length) {
       // 最新の count を取得して更新
       const countResponse = await axios.get(`${apiUrl}/db/counts/get/`, {
         params: {
