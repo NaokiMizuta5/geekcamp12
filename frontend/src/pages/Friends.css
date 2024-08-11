@@ -1,80 +1,84 @@
-.friends-container {
-    padding: 20px;
-    color: #000; /* 全体のテキスト色を黒に設定 */
-    text-align: left; /* テキストを左揃えに設定 */
-  }
-  
-  .friends-list {
-    display: flex;
-    flex-direction: column; /* フレンドリストを縦に並べる */
-    gap: 10px;
-  }
-  
-  .friend-card {
-    display: flex;
-    align-items: center; /* カード内のアイテムを中央揃えにする */
-    justify-content: space-between;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #f9f9f9;
-  }
-  
-  .friend-info {
-    display: flex;
-    align-items: center;
-    width: 300px;
-  }
-  
-  .friend-avatar img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-  }
-  
-  .friend-details {
-    margin-left: 10px;
-    width: 100%; 
-  }
-  
-  .friend-details h2 {
-    margin: 5;
-    font-size: 1.2em;
-    color: #000; /* 名前の色を黒に設定 */
-  }
-  
-  .friend-stats {
-    display: flex;
-    justify-content: space-around;
-    width: 300px;
-  }
-  
-  .friend-stats div {
-    text-align: center;
-    color: #000; /* テキストの色を黒に設定 */
-  }
-  
-  .friend-stats span:first-child {
-    display: block;
-    font-size: 0.8em;
-    color: #888; /* ラベルの色 */
-  }
-  
-  .friend-stats span:last-child {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #000; /* 値の色を黒に設定 */
-  }
-  
-  .progress-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .achievement-label {
-    font-size: 0.8em;
-    margin-bottom: -15px;
-    color: #888; /* テキスト色を黒に設定 */
-  }
-  
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.friend-avatar {
+  width: 40px;
+  height: 40px;
+  margin-right: 8px; /* ここでアイコンと名前の間の空白を調整 */
+  border-radius: 50%;
+}
+
+.friend-status {
+  display: flex;
+  align-items: center;
+  margin-left: -50px; /* ここでStatusの位置を左に調整 */
+}
+
+.friend-status-details {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.friend-status-details > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 16px; /* 数字同士の間隔を調整 */
+}
+
+.friend-status-details span:first-child {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.friend-status-details span:last-child {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* ドットの配置を縦に変更 */
+.dots {
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1; /* ドット間のスペースを最小にする */
+  transform: rotate(90deg); /* 必要に応じて回転させて縦にする */
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  outline: none;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.user-profile {
+  display: flex;
+  align-items: left;
+  margin-bottom: 16px;
+}
+
+.user-profile .user-info {
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+}
+
+.user-profile .user-info .username,
+.user-profile .user-info .user-id {
+  color: black;
+}
+
+.user-profile .edit-button {
+  margin-left: auto;
+}
