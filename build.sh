@@ -6,13 +6,12 @@ echo "Building frontend..."
 cd frontend
 yarn install
 yarn build
+cd ..
 
 # バックエンドの準備
 echo "Preparing backend..."
-cd ../backend
 pip install -r requirements.txt
+cd backend
 python manage.py collectstatic --noinput
 python manage.py migrate
-
-# ルートディレクトリに戻る
 cd ..
