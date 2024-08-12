@@ -14,16 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="habitlog",
-            name="committed_by",
-            field=models.ForeignKey(
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="committed_habit_logs",
-                to=settings.AUTH_USER_MODEL,
-            ),
-        ),
-        migrations.AddField(
-            model_name="habitlog",
             name="count",
             field=models.PositiveIntegerField(
                 blank=True, default=1, verbose_name="count"

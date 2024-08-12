@@ -25,7 +25,7 @@ const ModalHabit: React.FC<ModalHabitProps> = ({ open, onClose, onSave, userId }
       try {
         const response = await axios.post(`${apiUrl}/habits/create/`, {
           name: habitName,
-          created_by: userId,  // ここで現在のユーザーIDを送信
+          created_by: userId,
         });
 
         const newHabitItem: HabitItem = {
@@ -35,15 +35,7 @@ const ModalHabit: React.FC<ModalHabitProps> = ({ open, onClose, onSave, userId }
         };
 
         console.log('Habit item ID:', newHabitItem.id);
-  
-        // Habitが作成された後、関連するHabit Statusを作成
-        const habitStatusResponse = await axios.post(`${apiUrl}/progress/record/`, {
-          habit_item: newHabitItem.id,
-          committed_by: userId
-        });
-
-        console.log('Habit Status Created:', habitStatusResponse.data);
-  
+    
         onSave(newHabitItem);  // 新しく作成された HabitItem を onSave で渡す
         setHabitName('');  // フィールドをクリア
         onClose();  // モーダルを閉じる

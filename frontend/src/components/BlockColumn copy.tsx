@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import { useSpring, animated } from '@react-spring/web';
@@ -20,29 +21,23 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
   const [pileUpUsersCount, setPileUpUsersCount] = useState(0);
   const today = dayjs().format('YYYY-MM-DD'); // 今日の日付を取得
 
-  // useEffect フックを使用して、コンポーネントがマウントされたときにデータを取得
   useEffect(() => {
     if (habitId !== undefined) {
-      axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
-        params: {
-          habit_item: habitId,
-          committed_by: userId
-        }
-      }).then(response => {
-          setCount(response.data.length);
-          console.log('Count(by useEffect):', response.data.length);
+      // カウント数の取得
+      axios.get(`${apiUrl}/db/habit_item/get/${habitId}/`)
+        .then(response => {
+          setCount(response.data.count);
         })
         .catch(error => {
           console.error("Error fetching habit count:", error);
+          // カウント取得に失敗しても他の処理が実行される
         });
   
       // committing_users 数を取得
-      
       axios.get(`${apiUrl}/db/habit_item/committing_users/of/${habitId}/`)
         .then(response => {
           if (response.data.length > 0) {
             setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
-            console.log('Committing Users Count:', response.data.length);
           } else {
             setCommittingUsersCount(0); // デフォルトで0に設定
           }
@@ -58,17 +53,15 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
           .then(response => {
             if (response.data.length > 0) {
               setPileUpUsersCount(response.data.length);
-              console.log('Pile Up Users Count:', response.data.length);
             } else {
               setPileUpUsersCount(0); // デフォルトで0に設定
-              console.log('Pile Up Users Count:', 0);
             }
           })
           .catch(error => {
             console.error('Error fetching pile up users:', error);
             setPileUpUsersCount(0); // エラー時も0に設定
           });
-      }, 10000); // 10秒ごとに更新
+      }, 10000); // 1秒ごとに更新
   
       return () => clearInterval(intervalId); // コンポーネントがアンマウントされたときにクリーンアップ
     } else {
@@ -77,31 +70,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
     }
   }, [habitId, today]);
 
-
   const handlePileUp = async () => {
-    // Pile Up したユーザーを記録
-    await axios.post(`${apiUrl}/progress/record/`, {
-      habit_item: habitId,
-      committed_by: userId
-    });
-    
-    // ユーザーのデータを取得
-    const countResponse = await axios.get(`${apiUrl}/db/user/get/${userId}/`);
-    console.log('User:', countResponse.data);
-    
-    // ユーザーの習慣達成状況を取得
-    const { data: habitStatus } = await axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
-      params: {
-        habit_item: habitId,
-        committed_by: userId
-      }
-    });
-    
-    console.log('Habit Status:', habitStatus);
-    console.log('Habit Status Length:', habitStatus.length);
-    
-    setCount(habitStatus.length);
-
     try {
       // Step 1: piling_up_users エンドポイントで同じ日に同じ項目を Pile Up したユーザーのリストを取得
       const pilingUpUsersResponse = await axios.get(`${apiUrl}/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`);
@@ -145,10 +114,18 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       console.log('Habit Statuses:', habitStatuses);
 
       // committingUsersCount を habitStatuses の長さで更新
-      // setCommittingUsersCount(habitStatuses.length);
+      setCommittingUsersCount(habitStatuses.length);
       
       // ユーザー自身の達成状況があるか確認
       const userHasCommitted = habitStatuses.some((status: any) => status.committed_by === userId);
+
+      // 達成状況がない場合にのみ記録
+      if (!userHasCommitted) {
+        await axios.post(`${apiUrl}/progress/record/`, {
+          habit_item: habitId,
+          committed_by: userId
+        });
+      }
 
       // フレンド全員が Pile Up している場合に最大連続日数を取得してカウントを更新
       if (habitStatuses.length === filteredUserIds.length) {
@@ -165,8 +142,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       const latestCount = countResponse.data.latest;
       console.log('Latest Count:', latestCount);
 
-      // setCount(latestCount);
-      setPileUpUsersCount(habitStatuses.length);
+      setCount(latestCount);
     } else {
       console.log('Not all friends have piled up yet.');
     }
@@ -247,3 +223,4 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
 
 
 export default BlockColumn;
+*/

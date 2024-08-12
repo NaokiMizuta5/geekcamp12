@@ -34,12 +34,10 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'backend' / 'staticfiles'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
-import os
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]').split(',')
-
 
 # Application definition
 
