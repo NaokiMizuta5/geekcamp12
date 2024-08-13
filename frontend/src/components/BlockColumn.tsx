@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 interface BlockColumnProps {
   title: string;
@@ -18,7 +21,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
   const [ count, setCount ] = useState(0);
   const [committingUsersCount, setCommittingUsersCount] = useState(0);
   const [pileUpUsersCount, setPileUpUsersCount] = useState(0);
-  const today = dayjs().format('YYYY-MM-DD'); // 今日の日付を取得
+  const today = dayjs().utc().format('YYYY-MM-DD'); // 今日の日付を取得(UTC)
 
   // useEffect フックを使用して、コンポーネントがマウントされたときにデータを取得
   useEffect(() => {
@@ -45,6 +48,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
             console.log('Committing Users Count:', response.data.length);
           } else {
             setCommittingUsersCount(0); // デフォルトで0に設定
+            console.log('Committing Users Count:', 0);
           }
         })
         .catch(error => {
