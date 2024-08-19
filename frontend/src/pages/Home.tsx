@@ -35,7 +35,6 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
     setIsLoading(true);
     axios.get(`${apiUrl}/api/db/user/joined-habit-items/of/${userId}/`)
       .then(response => {
-        console.log(response.data);
         setHabitItems(response.data);
         setIsLoading(false);
       })
@@ -54,7 +53,6 @@ const Home: React.FC<{ userId: number }> = ({ userId }) => {
   };
 
   const handleSave = (newHabitItem: HabitItem) => {
-    // 新しい habit を habitItems に追加
     setHabitItems(prevHabitItems => [...prevHabitItems, newHabitItem]);
     setOpen(false);
   };

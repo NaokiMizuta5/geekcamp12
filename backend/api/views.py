@@ -100,9 +100,9 @@ class HabitStatusViewSet(viewsets.ModelViewSet):
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    user = authenticate(username=username, password=password)
+    user = authenticate(request, username=username, password=password)
     if user is not None:
-        return Response({'message': 'login succeeded'})
+        return Response({'message': 'login succeeded', 'user_id': user.id})
     else:
         return Response({'message': 'invalid credentials'}, status=400)
 

@@ -14,7 +14,7 @@ const Register: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-    
+
         try {
             const response = await axios.post(`${apiUrl}/api/register/`, {
                 username,
@@ -25,7 +25,7 @@ const Register: React.FC = () => {
                     'Content-Type': 'application/json'
                 }
             });
-    
+
             if (response.status === 201) {
                 alert('登録に成功しました！');
                 navigate('/home');

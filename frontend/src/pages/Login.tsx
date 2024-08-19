@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 import axios from 'axios';
 import '../App.css';
 import logo from '../assets/logo1.png';
 import { Box, Button, TextField, Typography, Container, Link } from '@mui/material';
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
+    const { setUserId } = useUser(); 
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -21,6 +23,8 @@ const Login: React.FC = () => {
             });
     
             if (response.status === 200) {
+                const userId = response.data.user_id; // APIのレスポンスからユーザーIDを取得
+                setUserId(userId);
                 navigate('/home');
             } else {
                 alert('ログインに失敗しました。もう一度お試しください。');
@@ -63,7 +67,7 @@ const Login: React.FC = () => {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         flexGrow: 1,
-                        textAlign: 'right', // テキストを右揃えにする
+                        textAlign: 'right',
                         paddingRight: '20px', // 右側にスペースを確保
                     }}
                 >
