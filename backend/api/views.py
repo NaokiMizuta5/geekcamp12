@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 from django.utils import timezone
+from django.contrib.auth import login as auth_login
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
@@ -68,10 +69,12 @@ def log_habit(request):
         print(f"Found HabitItem: {habit_item}")
 
         date_committed=timezone.now()  # 現在の日付を設定
-        committed_by = request.user  # ログインしているユーザーを取得
+        # created_by_id = request.data.get('created_by')  # created_by は user_id の number 型
+        committed_by = request.user  # ログインしているユーザーを
+
 
         # HabitLog を作成して保存
-        habit_log = HabitLog(habit_item=habit_item, date_committed=date_committed)
+        habit_log = HabitLog(habit_item=habit_item, committed_by=committed_by, date_committed=date_committed)
         habit_log.save()
         print("HabitLog saved successfully")
 
@@ -98,8 +101,10 @@ def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
+    
     if user is not None:
-        return Response({'message': 'login succeeded'})
+        auth_login(request, user)  # ユーザーをログインさせ、セッションを開始する
+        return Response({'message': 'login succeeded', 'user_id': user.id})
     else:
         return Response({'message': 'invalid credentials'}, status=400)
 
@@ -114,6 +119,9 @@ def register(request):
 
         # ユーザーの作成処理
         user = User.objects.create_user(username=username, email=email, password=password)
+
+         # ユーザーを自動的にログインさせる
+        auth_login(request, user)
 
         return JsonResponse({'message': 'User registered successfully!'}, status=201)
     return JsonResponse({'error': 'Invalid request'}, status=400)
