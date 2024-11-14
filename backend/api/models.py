@@ -189,6 +189,42 @@ class HabitLog(models.Model):
         )
 
 
+class HabitTeamLog(models.Model):
+    habit_item = models.ForeignKey(
+        to=HabitItem,
+        on_delete=models.CASCADE,
+        related_name='habit_team_logs',
+        verbose_name='habit item',
+    )
+    date_committed = models.DateField(
+        verbose_name='date committed',
+    )
+
+    count = models.PositiveIntegerField(
+        verbose_name='count',
+        blank=True,
+        null=False,
+        default=1,
+    )
+
+    next = models.OneToOneField(
+        to='HabitTeamLog',
+        on_delete=models.PROTECT,
+        related_name='prev',
+        verbose_name='next habit team log',
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return (
+            f'item: {self.habit_item}; '
+            f'{self.date_committed}; '
+            f'count={self.count}; '
+            f'next={self.next}; '
+        )
+
+
 # Join tables
 
 ...

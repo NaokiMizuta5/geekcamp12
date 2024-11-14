@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Friends from './pages/Friends';
 import Settings from './pages/Settings';
+import { UserProvider, useUser } from './context/UserContext'
 import Sidebar from "@components/Sidebar";
 import { Box } from '@mui/material';
 import './App.css';
@@ -12,16 +13,19 @@ const drawerWidth = 240; // サイドバーの幅を指定
 
 function App() {
   return (
-    <Router>
-      <MainContent />
-    </Router>
+    <UserProvider> {/* ユーザーコンテキストでアプリケーション全体をラップ */}
+      <Router>
+        <MainContent />
+      </Router>
+    </UserProvider>
   );
 }
 
 function MainContent() {
   const location = useLocation();
-  // 一旦ハードコード
-  const userId = 1; 
+  const { userId } = useUser();
+  // ユーザーIDを数値に変換
+  const numericUserId = userId !== null ? parseInt(userId, 10) : null;
 
   // サイドバーを表示するルート
   const showSidebar = location.pathname === '/' || location.pathname === '/friends' || location.pathname === '/settings';
@@ -45,7 +49,11 @@ function MainContent() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home userId={userId}/>} />
+        {/* userId が null の場合はログインページにリダイレクト */}
+        <Route
+            path="/home"
+            element={numericUserId !== null ? <Home userId={numericUserId} /> : <Navigate to="/login" />}
+          />
         <Route path="/friends" element={<Friends />} />
         <Route path="/settings" element={<Settings />} />
         </Routes>

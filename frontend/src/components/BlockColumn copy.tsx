@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import { useSpring, animated } from '@react-spring/web';
@@ -5,9 +6,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-
-dayjs.extend(utc);
 
 interface BlockColumnProps {
   title: string;
@@ -19,111 +17,91 @@ const AnimatedBox = animated(Box);
 
 const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
   const [ count, setCount ] = useState(0);
-  const [committingUserIds, setCommittingUserIds] = useState<number[]>([]);
-  const [committingUsersCount, setCommittingUsersCount] = useState<number>(0);
-  const [pilingUpUserIds, setPilingUpUserIds] = useState<number[]>([]);
-  const [pilingUpUsersCount, setPilingUpUsersCount] = useState<number>(0);
-  const today = dayjs().utc().format('YYYY-MM-DD'); // 今日の日付を取得(UTC)
+  const [committingUsersCount, setCommittingUsersCount] = useState(0);
+  const [pileUpUsersCount, setPileUpUsersCount] = useState(0);
+  const today = dayjs().format('YYYY-MM-DD'); // 今日の日付を取得
 
-  // useEffect フックを使用して、コンポーネントがマウントされたときにデータを取得
   useEffect(() => {
     if (habitId !== undefined) {
-      axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
-        params: {
-          habit_item: habitId,
-          committed_by: userId
-        }
-      }).then(response => {
-          setCount(response.data.length);
-          console.log('multiple_habit_status.length:', response.data.length);
+      // カウント数の取得
+      axios.get(`${apiUrl}/db/habit_item/get/${habitId}/`)
+        .then(response => {
+          setCount(response.data.count);
         })
         .catch(error => {
           console.error("Error fetching habit count:", error);
+          // カウント取得に失敗しても他の処理が実行される
         });
-
-      const fetch_Commit_pileup_Count = async () => {
-        try {
-          // committing_users数の取得
-          const committingUsersResponse = await axios.get(`${apiUrl}/db/habit_item/committing_users/of/${habitId}/`);
-          const commituserIds: number[] = committingUsersResponse.data.map((status: any) => status.id);
-          setCommittingUserIds(commituserIds);
-          setCommittingUsersCount(commituserIds.length);
-          console.log('Committing User IDs:', committingUserIds);
-          console.log('Committing User Counts:', committingUsersCount);
-
-          // piling_up_users数の取得
-          const pilingUpUsersResponse = await axios.get(`${apiUrl}/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`);
-          if (Array.isArray(pilingUpUsersResponse.data)) {
-            const pileupuserIds: number[] = pilingUpUsersResponse.data.map((status: any) => status.id);
-            setPilingUpUserIds(pileupuserIds);
-            setPilingUpUsersCount(pileupuserIds.length);
-            console.log('Piling Up User IDs:', pilingUpUserIds);
-            console.log('Piling Up User Counts:', pilingUpUsersCount);
-          } else if (Object.keys(pilingUpUsersResponse.data).length === 0) {
-            console.log('No piling up users found.');
-            setPilingUpUserIds([]);  // 空の配列を設定
-            setPilingUpUsersCount(0);  // カウントを0に設定
+  
+      // committing_users 数を取得
+      axios.get(`${apiUrl}/db/habit_item/committing_users/of/${habitId}/`)
+        .then(response => {
+          if (response.data.length > 0) {
+            setCommittingUsersCount(response.data.length); // 配列の長さがユーザー数
           } else {
-              console.error('Unexpected data format for pilingUpUsersResponse:', pilingUpUsersResponse.data);
+            setCommittingUsersCount(0); // デフォルトで0に設定
           }
-        } catch (error) {
-          console.error('Error fetching committing & pile up users count:', error);
-        }
-      };
-      // 非同期処理を実行
-      fetch_Commit_pileup_Count();
+        })
+        .catch(error => {
+          console.error('Error fetching committing users:', error);
+          setCommittingUsersCount(0); // エラー時も0に設定
+        });
+  
+      // Pile up しているユーザー数をリアルタイムで取得
+      const intervalId = setInterval(() => {
+        axios.get(`${apiUrl}/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`)
+          .then(response => {
+            if (response.data.length > 0) {
+              setPileUpUsersCount(response.data.length);
+            } else {
+              setPileUpUsersCount(0); // デフォルトで0に設定
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching pile up users:', error);
+            setPileUpUsersCount(0); // エラー時も0に設定
+          });
+      }, 10000); // 1秒ごとに更新
+  
+      return () => clearInterval(intervalId); // コンポーネントがアンマウントされたときにクリーンアップ
+    } else {
+      // habitIdがundefinedの場合は初期値を設定
+      setCount(0);
     }
-  }, [habitId, userId, today, setCommittingUsersCount, setPilingUpUsersCount]);
+  }, [habitId, today]);
 
   const handlePileUp = async () => {
-    // Pile Up したユーザーを記録
-    await axios.post(`${apiUrl}/progress/record/`, {
-      habit_item: habitId,
-      committed_by: userId
-    });
-
-    // ユーザーの習慣達成状況を取得
-    const { data: habitStatus } = await axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
-      params: {
-        habit_item: habitId,
-        committed_by: userId
-      }
-    });
-    setCount(habitStatus.length);
-
     try {
-      // committing_users数の確認
-      console.log('committing user counts external:', committingUsersCount);
-
-      // piling_up_users エンドポイントで同じ日に同じ項目を Pile Up したユーザーのリストを取得
+      // Step 1: piling_up_users エンドポイントで同じ日に同じ項目を Pile Up したユーザーのリストを取得
       const pilingUpUsersResponse = await axios.get(`${apiUrl}/db/habit_item/piling_up_users/of/${habitId}/at/${today}/`);
+  
+      // レスポンスの内容をログで確認
+      console.log('Piling Up Users Response:', pilingUpUsersResponse.data);
+  
       let pilingUpUserIds: number[] = [];
       if (Array.isArray(pilingUpUsersResponse.data)) {
-        pilingUpUserIds = pilingUpUsersResponse.data.map((status: any) => status.id);
+        pilingUpUserIds = pilingUpUsersResponse.data.map((status: any) => status.committed_by);
       } else if (typeof pilingUpUsersResponse.data === 'object' && Object.keys(pilingUpUsersResponse.data).length === 0) {
-        pilingUpUserIds = [];// 空のオブジェクトが返ってきた場合、空の配列を代入
+        // 空のオブジェクトが返ってきた場合、空の配列を代入
+        pilingUpUserIds = [];
       } else {
         throw new Error('Expected an array but received a different type');
       }
-      console.log('Piling Up User IDs(hable):', pilingUpUserIds);
-      console.log('Piling Up User IDs Length(hable):', pilingUpUserIds.length);
-      setPilingUpUsersCount(pilingUpUserIds.length);
+  
+      // Step 2: friends/of エンドポイントでフレンドのリストを取得し、フレンドじゃないIDを除外
+      const friendsResponse = await axios.get(`${apiUrl}/db/user/friends/of/${userId}/`);
+      const friendIds: number[] = friendsResponse.data.map((friend: any) => friend.id);
+      console.log('Friend IDs:', friendIds);
+  
+      let filteredUserIds = pilingUpUserIds.filter(userId => friendIds.includes(userId));
+      console.log('Filtered User IDs:', filteredUserIds);
 
-      // PileUpUsersCount が committingUsersCount と同じ場合、最大連続日数を取得してカウントを更新
-      if (pilingUpUserIds.length === committingUsersCount) {
-        const countResponse = await axios.get(`${apiUrl}/db/counts/get/`, {
-          params: {
-            habit_item: habitId,
-            committed_by: userId
-          }
-        });
-        const latestCount = countResponse.data.latest;
-        setCount(latestCount);
-      } else {
-        console.log('Not all friends have piled up yet.');
+      // フレンドがいない場合、ユーザー自身を含める
+      if (filteredUserIds.length === 0) {
+        filteredUserIds = [userId];
       }
-
-      /*
+      console.log('Filtered User IDs(include):', filteredUserIds);
+  
       // Step 3: multiple_habit_status エンドポイントを使用して、リストの全ユーザーが Pile Up しているか確認
       const habitStatusResponse = await axios.get(`${apiUrl}/db/multiple_habit_status/get/`, {
         params: {
@@ -134,6 +112,20 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       });
       const habitStatuses = habitStatusResponse.data;
       console.log('Habit Statuses:', habitStatuses);
+
+      // committingUsersCount を habitStatuses の長さで更新
+      setCommittingUsersCount(habitStatuses.length);
+      
+      // ユーザー自身の達成状況があるか確認
+      const userHasCommitted = habitStatuses.some((status: any) => status.committed_by === userId);
+
+      // 達成状況がない場合にのみ記録
+      if (!userHasCommitted) {
+        await axios.post(`${apiUrl}/progress/record/`, {
+          habit_item: habitId,
+          committed_by: userId
+        });
+      }
 
       // フレンド全員が Pile Up している場合に最大連続日数を取得してカウントを更新
       if (habitStatuses.length === filteredUserIds.length) {
@@ -150,12 +142,11 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
       const latestCount = countResponse.data.latest;
       console.log('Latest Count:', latestCount);
 
-      // setCount(latestCount);
-      setPileUpUsersCount(habitStatuses.length);
+      setCount(latestCount);
     } else {
       console.log('Not all friends have piled up yet.');
     }
-      */
+
   } catch (error) {
     console.error('Error handling pile up:', error);
   }
@@ -191,7 +182,7 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
         Committing Users: {committingUsersCount}
       </Typography>
       <Typography variant="subtitle2">
-        Pile Up Users: {pilingUpUsersCount} / {committingUsersCount}
+        Pile Up Users: {pileUpUsersCount} / {committingUsersCount}
       </Typography>
       <Box
         sx={{
@@ -230,4 +221,6 @@ const BlockColumn: React.FC<BlockColumnProps> = ({ title, habitId, userId}) => {
   );
 };
 
+
 export default BlockColumn;
+*/

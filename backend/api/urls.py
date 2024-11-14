@@ -78,4 +78,5 @@ urlpatterns = [
          name='create_habit_status'),
 
     path('db/counts/get/', views.get_counts, name='get_counts'),
+    path('db/counts/team/get/', views.get_team_counts, name='get_team_counts'),
 ]
