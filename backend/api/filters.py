@@ -5,6 +5,7 @@ from api.models import (
     HabitLog,
     HabitStatus,
     User,
+    HabitTeamLog,
 )
 
 
@@ -58,6 +59,21 @@ class HabitLogFilter(filters.FilterSet):
 
     habit_item = filters.ModelChoiceFilter(queryset=HabitItem.objects.all())
     committed_by = filters.ModelChoiceFilter(queryset=User.objects.all())
+
+    date_committed = filters.DateFilter(
+        lookup_expr='exact',
+        input_formats=['%Y-%m-%d'],
+    )
+
+    class Meta:
+        model = HabitLog
+        fields = []
+
+
+class HabitTeamLogFilter(filters.FilterSet):
+    id = filters.UUIDFilter()
+
+    habit_item = filters.ModelChoiceFilter(queryset=HabitItem.objects.all())
 
     date_committed = filters.DateFilter(
         lookup_expr='exact',
